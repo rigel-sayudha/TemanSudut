@@ -44,12 +44,12 @@ class TransactionController extends Controller
         $white = imagecolorallocate($dst, 255, 255, 255);
         imagefill($dst, 0, 0, $white);
         imagecopyresampled($dst, $src, 0, 0, 0, 0, $newW, $newH, $origW, $origH);
-        imagedestroy($src);
+        unset($src);
 
         ob_start();
         imagejpeg($dst, null, $quality);
         $data = ob_get_clean();
-        imagedestroy($dst);
+        unset($dst);
 
         return 'data:image/jpeg;base64,' . base64_encode($data);
     }
@@ -150,7 +150,7 @@ class TransactionController extends Controller
             ]), $items));
 
             foreach ($validated['items'] as $item) {
-                /** @var \App\Models\Product $product */
+                /** @var Product $product */
                 $product = $productMap[$item['product_id']];
                 $product->load('ingredients.rawMaterial');
 
@@ -175,7 +175,6 @@ class TransactionController extends Controller
                     );
                 }
 
-                // Deduct cup stock if drink uses disposable cup and wasn't already deducted
                 if ($itemUsesCup && !$cupDeducted) {
                     $cupMaterial = \App\Models\RawMaterial::where('name', 'Cup')->first();
                     if ($cupMaterial) {
@@ -211,7 +210,7 @@ class TransactionController extends Controller
             return response()->json(['message' => 'Transaction failed', 'error' => $e->getMessage()], 500);
         }
     }
-    private function getFilteredHistoryQuery(string $filter = null)
+    private function getFilteredHistoryQuery(?string $filter = null)
     {
         $tz  = config('app.timezone', 'Asia/Makassar');
         $fmt = 'Y-m-d H:i:s';
@@ -565,7 +564,7 @@ class TransactionController extends Controller
         }
     }
 
-    public function exportReceiptPdf(Request $request, $id)
+    public function exportReceiptPdf(Request $request, int $id)
     {
         $user = $this->resolveUser($request);
 
@@ -573,7 +572,7 @@ class TransactionController extends Controller
             return response()->json(['message' => 'Akses ditolak. Silakan login kembali.'], 401);
         }
 
-        /** @var \App\Models\Transaction $transaction */
+        /** @var Transaction $transaction */
         $transaction = Transaction::with(['items.product', 'user', 'table'])->findOrFail($id);
 
         $logoBase64 = $this->getCompressedLogoBase64();
@@ -606,7 +605,7 @@ class TransactionController extends Controller
         return response()->json($transactions);
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, int $id)
     {
         $transaction = Transaction::findOrFail($id);
 
@@ -691,7 +690,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $transaction = Transaction::with(['items.product.ingredients.rawMaterial'])->findOrFail($id);
 

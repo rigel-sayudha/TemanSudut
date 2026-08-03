@@ -7,7 +7,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Placeholder;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -40,9 +39,11 @@ class ProductForm
                     ->required()
                     ->numeric()
                     ->prefix('Rp'),
-                Placeholder::make('stock_display')
+                TextInput::make('stock_display')
                     ->label('Stok (dari bahan baku)')
-                    ->content(fn ($record) => $record 
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->formatStateUsing(fn ($record) => $record 
                         ? $record->stock . ' porsi' 
                         : 'Otomatis dihitung setelah simpan'),
                 FileUpload::make('image')
@@ -83,15 +84,21 @@ class ProductForm
                     ->description('Dihitung otomatis berdasarkan resep bahan baku')
                     ->icon('heroicon-o-calculator')
                     ->schema([
-                        Placeholder::make('hpp_display')
+                        TextInput::make('hpp_display')
                             ->label('HPP (Harga Pokok Produksi)')
-                            ->content(fn ($record) => $record ? 'Rp ' . number_format($record->hpp, 0, ',', '.') : 'Simpan produk terlebih dahulu'),
-                        Placeholder::make('profit_display')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn ($record) => $record ? 'Rp ' . number_format($record->hpp, 0, ',', '.') : 'Simpan produk terlebih dahulu'),
+                        TextInput::make('profit_display')
                             ->label('Profit per Porsi')
-                            ->content(fn ($record) => $record ? 'Rp ' . number_format($record->profit, 0, ',', '.') : '-'),
-                        Placeholder::make('margin_display')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn ($record) => $record ? 'Rp ' . number_format($record->profit, 0, ',', '.') : '-'),
+                        TextInput::make('margin_display')
                             ->label('Margin')
-                            ->content(fn ($record) => $record && $record->price > 0
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn ($record) => $record && $record->price > 0
                                 ? round(($record->profit / $record->price) * 100, 1) . '%'
                                 : '-'),
                     ])

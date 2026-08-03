@@ -26,7 +26,7 @@ class RawMaterial extends Model
     {
         static::saving(function (RawMaterial $material) {
             if (is_null($material->price_per_small_unit) && $material->conversion_value > 0 && $material->price_per_large_unit > 0) {
-                $material->price_per_small_unit = (float) ($material->price_per_large_unit / $material->conversion_value);
+                $material->price_per_small_unit = (string) ($material->price_per_large_unit / $material->conversion_value);
             }
         });
 

@@ -30,13 +30,13 @@ class StockLog extends Model
      * Adjust stock for a product and record the log.
      */
     public static function adjustStock(
-        int $productId = null,
+        ?int $productId = null,
         float $quantity,
         string $type = 'adjustment',
         ?string $reason = null,
         ?string $notes = null,
         ?int $userId = null,
-        int $rawMaterialId = null
+        ?int $rawMaterialId = null
     ): static {
         $stockBefore = 0;
         $stockAfter = 0;
@@ -56,7 +56,7 @@ class StockLog extends Model
         return static::create([
             'product_id'      => $productId,
             'raw_material_id' => $rawMaterialId,
-            'user_id'         => $userId ?? auth()->id(),
+            'user_id'         => $userId ?? \Illuminate\Support\Facades\Auth::id(),
             'type'            => $type,
             'quantity'        => $quantity,
             'stock_before'    => $stockBefore,
