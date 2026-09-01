@@ -39,6 +39,9 @@ class FinanceTabState extends State<FinanceTab> with AutomaticKeepAliveClientMix
   String _filterCategory = '';         
   String _chartPeriod = 'monthly';     
 
+  bool _isAllocationExpanded = true;
+  bool _isChartExpanded = true;
+
   // Date range untuk ringkasan
   DateTimeRange? _summaryDateRange;
   // Date range untuk riwayat catatan
@@ -593,6 +596,18 @@ class FinanceTabState extends State<FinanceTab> with AutomaticKeepAliveClientMix
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: net >= 0 ? Colors.green[700] : Colors.red[700]),
                 ),
               ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isAllocationExpanded = !_isAllocationExpanded;
+                  });
+                },
+                child: Icon(
+                  _isAllocationExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  color: Colors.grey[700],
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 6),
@@ -600,8 +615,9 @@ class FinanceTabState extends State<FinanceTab> with AutomaticKeepAliveClientMix
             'Berdasarkan filter: ${_summaryDateRange != null ? _displayRange(_summaryDateRange!) : _filterSummary == 'daily' ? 'Hari Ini' : _filterSummary == 'weekly' ? 'Minggu Ini' : 'Bulan Ini'}',
             style: TextStyle(fontSize: 11, color: Colors.grey[500]),
           ),
-          const SizedBox(height: 16),
-          ..._allocations.map((a) {
+          if (_isAllocationExpanded) ...[
+            const SizedBox(height: 16),
+            ..._allocations.map((a) {
             final pct = a['pct'] as int;
             final allocated = net * pct / 100;
             final label = a['label'] as String;
@@ -701,6 +717,7 @@ class FinanceTabState extends State<FinanceTab> with AutomaticKeepAliveClientMix
               ]),
             ],
           ),
+          ],
         ],
       ),
     );
@@ -883,31 +900,46 @@ class FinanceTabState extends State<FinanceTab> with AutomaticKeepAliveClientMix
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           const Text('Grafik Keuangan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-          // chart period buttons
-          Row(children: periods.map((p) {
-            final sel = _chartPeriod == p['val'];
-            return GestureDetector(
-              onTap: () async {
-                setState(() => _chartPeriod = p['val']!);
-                await _loadChart();
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                margin: const EdgeInsets.only(left: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: sel ? const Color(0xFF5D4037) : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(16),
+          // chart period buttons and minimize toggle
+          Row(children: [
+            Row(children: periods.map((p) {
+              final sel = _chartPeriod == p['val'];
+              return GestureDetector(
+                onTap: () async {
+                  setState(() => _chartPeriod = p['val']!);
+                  await _loadChart();
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  margin: const EdgeInsets.only(left: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: sel ? const Color(0xFF5D4037) : Colors.grey[100],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(p['label']!, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: sel ? Colors.white : Colors.grey[600])),
                 ),
-                child: Text(p['label']!, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: sel ? Colors.white : Colors.grey[600])),
+              );
+            }).toList()),
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isChartExpanded = !_isChartExpanded;
+                });
+              },
+              child: Icon(
+                _isChartExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                color: Colors.grey[700],
               ),
-            );
-          }).toList()),
+            ),
+          ]),
         ]),
-        const SizedBox(height: 12),
-        // Legend
-        Row(children: [
-          _legendDot(Colors.green[600]!, 'Pemasukan'),
+        if (_isChartExpanded) ...[
+          const SizedBox(height: 12),
+          // Legend
+          Row(children: [
+            _legendDot(Colors.green[600]!, 'Pemasukan'),
           const SizedBox(width: 16),
           _legendDot(Colors.red[600]!, 'Pengeluaran'),
         ]),
@@ -946,6 +978,7 @@ class FinanceTabState extends State<FinanceTab> with AutomaticKeepAliveClientMix
               }),
             ),
           ),
+        ],
       ]),
     );
   }
