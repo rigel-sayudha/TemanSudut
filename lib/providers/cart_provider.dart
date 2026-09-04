@@ -15,10 +15,10 @@ class CartItem {
   bool useCup; // true = disposable cup (deduct stock), false = reusable glass
 
   CartItem({
-    required this.product, 
-    this.quantity = 1, 
-    this.notes, 
-    this.extraCharge = 0, 
+    required this.product,
+    this.quantity = 1,
+    this.notes,
+    this.extraCharge = 0,
     this.extraChargeLabel,
     this.isFree = false,
     this.useCup = true,
@@ -28,24 +28,28 @@ class CartItem {
 
   bool get isDrink {
     final catName = product.category?.name.toLowerCase() ?? '';
-    return catName.contains('kopi') || catName.contains('coffee') || catName.contains('non-kopi') || catName.contains('non coffee') || catName.contains('milk');
+    return catName.contains('kopi') ||
+        catName.contains('coffee') ||
+        catName.contains('non-kopi') ||
+        catName.contains('non coffee') ||
+        catName.contains('milk');
   }
 }
 
 class CartProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
-  
+
   List<Product> _availableProducts = [];
   List<Product> get availableProducts => _availableProducts;
 
   List<Category> _categories = [];
   List<Category> get categories => _categories;
-  
+
   Category? _selectedCategory;
   Category? get selectedCategory => _selectedCategory;
 
-  List<CartItem> _items = [];
-  String _orderType = 'dine_in'; 
+  final List<CartItem> _items = [];
+  String _orderType = 'dine_in';
   TableModel? _selectedTable;
   String? _customerName;
   String _searchQuery = '';
@@ -109,7 +113,9 @@ class CartProvider with ChangeNotifier {
   void _applyFilter() {
     List<Product> result = _allProducts;
     if (_selectedCategory != null) {
-      result = result.where((p) => p.categoryId == _selectedCategory!.id).toList();
+      result = result
+          .where((p) => p.categoryId == _selectedCategory!.id)
+          .toList();
     }
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
@@ -128,7 +134,9 @@ class CartProvider with ChangeNotifier {
         _categories = cachedCats.map((j) => Category.fromJson(j)).toList();
       } else {
         _categories = await _apiService.getCategories();
-        await CacheService.saveCategories(_categories.map((c) => c.toJson()).toList());
+        await CacheService.saveCategories(
+          _categories.map((c) => c.toJson()).toList(),
+        );
       }
     }
 
@@ -139,7 +147,9 @@ class CartProvider with ChangeNotifier {
         _allProducts = cachedProds.map((j) => Product.fromJson(j)).toList();
       } else {
         _allProducts = await _apiService.getProducts();
-        await CacheService.saveProducts(_allProducts.map((p) => p.toJson()).toList());
+        await CacheService.saveProducts(
+          _allProducts.map((p) => p.toJson()).toList(),
+        );
       }
     }
 
@@ -159,7 +169,7 @@ class CartProvider with ChangeNotifier {
   String? get customerName => _customerName;
 
   double get subtotal => _items.fold(0, (sum, item) => sum + item.subtotal);
-  double get tax => 0; 
+  double get tax => 0;
   double get total => subtotal;
 
   void setOrderType(String type) {
@@ -181,7 +191,13 @@ class CartProvider with ChangeNotifier {
   }
 
   void addToCart(Product product, {String? notes}) {
-    int index = _items.indexWhere((item) => item.product.id == product.id && item.notes == notes && item.extraCharge == 0 && item.isFree == false);
+    int index = _items.indexWhere(
+      (item) =>
+          item.product.id == product.id &&
+          item.notes == notes &&
+          item.extraCharge == 0 &&
+          item.isFree == false,
+    );
     if (index >= 0) {
       _items[index].quantity++;
     } else {
@@ -262,7 +278,9 @@ class CartProvider with ChangeNotifier {
         if (item.isFree) {
           extraCharge = -(item.product.price);
           final freeInfo = '[FREE CUP / GRATIS]';
-          notes = notes != null && notes.isNotEmpty ? '$notes | $freeInfo' : freeInfo;
+          notes = notes != null && notes.isNotEmpty
+              ? '$notes | $freeInfo'
+              : freeInfo;
         }
         return {
           'product_id': item.product.id,
@@ -282,16 +300,20 @@ class CartProvider with ChangeNotifier {
     return false;
   }
 
-
   String? _lastCheckoutError;
   String? get lastCheckoutError => _lastCheckoutError;
 
-  Future<bool> checkout(String paymentMethod, {double? amountReceived, double? changeAmount, dynamic photo}) async {
+  Future<bool> checkout(
+    String paymentMethod, {
+    double? amountReceived,
+    double? changeAmount,
+    dynamic photo,
+  }) async {
     if (_items.isEmpty) return false;
     _lastCheckoutError = null;
     String finalOrderType = _orderType;
     if (_orderType == 'dine_in' && _selectedTable == null) {
-        finalOrderType = 'take_away';
+      finalOrderType = 'take_away';
     }
 
     Map<String, dynamic> payload = {
@@ -304,12 +326,17 @@ class CartProvider with ChangeNotifier {
       'items': _items.map((item) {
         String? finalNotes = item.notes;
         if (item.extraCharge > 0) {
-          String extraInfo = '[Extra: ${item.extraChargeLabel ?? "Tambahan"} +Rp${item.extraCharge.toInt()}]';
-          finalNotes = finalNotes != null && finalNotes.isNotEmpty ? '$finalNotes | $extraInfo' : extraInfo;
+          String extraInfo =
+              '[Extra: ${item.extraChargeLabel ?? "Tambahan"} +Rp${item.extraCharge.toInt()}]';
+          finalNotes = finalNotes != null && finalNotes.isNotEmpty
+              ? '$finalNotes | $extraInfo'
+              : extraInfo;
         }
         if (item.isFree) {
           String freeInfo = '[FREE CUP / GRATIS]';
-          finalNotes = finalNotes != null && finalNotes.isNotEmpty ? '$finalNotes | $freeInfo' : freeInfo;
+          finalNotes = finalNotes != null && finalNotes.isNotEmpty
+              ? '$finalNotes | $freeInfo'
+              : freeInfo;
         }
 
         double finalExtraCharge = item.extraCharge;

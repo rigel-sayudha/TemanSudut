@@ -38,9 +38,9 @@ class CameraHelper {
       return result;
     } catch (e) {
       debugPrint('Camera Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Camera error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Camera error: $e')));
       return null;
     }
   }
@@ -49,7 +49,7 @@ class CameraHelper {
 class CameraDialog extends StatelessWidget {
   final CameraController controller;
 
-  const CameraDialog({Key? key, required this.controller}) : super(key: key);
+  const CameraDialog({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class CameraDialog extends StatelessWidget {
               child: CameraPreview(controller),
             ),
           ),
-          
+
           // Header
           Positioned(
             top: 20,

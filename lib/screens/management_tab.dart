@@ -12,25 +12,27 @@ import '../utils/app_format.dart';
 import '../providers/auth_provider.dart';
 
 class ManagementTab extends StatefulWidget {
+  const ManagementTab({super.key});
+
   @override
   _ManagementTabState createState() => _ManagementTabState();
 }
 
-class _ManagementTabState extends State<ManagementTab> with SingleTickerProviderStateMixin {
+class _ManagementTabState extends State<ManagementTab>
+    with SingleTickerProviderStateMixin {
   TabController? _tabCtrl;
-  bool _isOwner = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final auth = Provider.of<AuthProvider>(context);
-    
+
     // Check permissions
     final bool canStock = auth.can('manage_stock');
     final bool canEmployees = auth.can('manage_employees');
     final bool canPrinter = auth.can('manage_printer');
     final bool canRawItems = auth.can('manage_raw_materials');
-    
+
     int tabCount = 0;
     if (canStock) tabCount++;
     if (canEmployees) tabCount++;
@@ -65,7 +67,14 @@ class _ManagementTabState extends State<ManagementTab> with SingleTickerProvider
               children: [
                 Padding(
                   padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: Text('Management', style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    'Management',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
                 TabBar(
                   controller: _tabCtrl,
@@ -73,13 +82,28 @@ class _ManagementTabState extends State<ManagementTab> with SingleTickerProvider
                   labelColor: const Color(0xFF5D4037),
                   unselectedLabelColor: Colors.grey[400],
                   tabs: [
-                    if (Provider.of<AuthProvider>(context, listen: false).can('manage_stock')) 
-                      Tab(icon: Icon(Icons.inventory_2_outlined), text: 'Stok Produk'),
-                    if (Provider.of<AuthProvider>(context, listen: false).can('manage_employees')) 
+                    if (Provider.of<AuthProvider>(
+                      context,
+                      listen: false,
+                    ).can('manage_stock'))
+                      Tab(
+                        icon: Icon(Icons.inventory_2_outlined),
+                        text: 'Stok Produk',
+                      ),
+                    if (Provider.of<AuthProvider>(
+                      context,
+                      listen: false,
+                    ).can('manage_employees'))
                       Tab(icon: Icon(Icons.people_outline), text: 'Karyawan'),
-                    if (Provider.of<AuthProvider>(context, listen: false).can('manage_printer')) 
+                    if (Provider.of<AuthProvider>(
+                      context,
+                      listen: false,
+                    ).can('manage_printer'))
                       Tab(icon: Icon(Icons.print_outlined), text: 'Printer'),
-                    if (Provider.of<AuthProvider>(context, listen: false).can('manage_raw_materials')) 
+                    if (Provider.of<AuthProvider>(
+                      context,
+                      listen: false,
+                    ).can('manage_raw_materials'))
                       Tab(icon: Icon(Icons.bakery_dining), text: 'Bahan Baku'),
                   ],
                 ),
@@ -92,13 +116,25 @@ class _ManagementTabState extends State<ManagementTab> with SingleTickerProvider
           child: TabBarView(
             controller: _tabCtrl,
             children: [
-              if (Provider.of<AuthProvider>(context, listen: false).can('manage_stock')) 
+              if (Provider.of<AuthProvider>(
+                context,
+                listen: false,
+              ).can('manage_stock'))
                 _StockManagementView(),
-              if (Provider.of<AuthProvider>(context, listen: false).can('manage_employees')) 
+              if (Provider.of<AuthProvider>(
+                context,
+                listen: false,
+              ).can('manage_employees'))
                 UserManagementTab(),
-              if (Provider.of<AuthProvider>(context, listen: false).can('manage_printer')) 
+              if (Provider.of<AuthProvider>(
+                context,
+                listen: false,
+              ).can('manage_printer'))
                 PrinterSettingsScreen(),
-              if (Provider.of<AuthProvider>(context, listen: false).can('manage_raw_materials')) 
+              if (Provider.of<AuthProvider>(
+                context,
+                listen: false,
+              ).can('manage_raw_materials'))
                 _RawMaterialsView(),
             ],
           ),
@@ -115,7 +151,8 @@ class _StockManagementView extends StatefulWidget {
   _StockManagementViewState createState() => _StockManagementViewState();
 }
 
-class _StockManagementViewState extends State<_StockManagementView> with AutomaticKeepAliveClientMixin {
+class _StockManagementViewState extends State<_StockManagementView>
+    with AutomaticKeepAliveClientMixin {
   final ApiService _apiService = ApiService();
   List<Product> _products = [];
   bool _isLoading = true;
@@ -147,7 +184,9 @@ class _StockManagementViewState extends State<_StockManagementView> with Automat
     }
     try {
       final products = await _apiService.getProducts();
-      await CacheService.saveMgmtStock(products.map((p) => p.toJson()).toList());
+      await CacheService.saveMgmtStock(
+        products.map((p) => p.toJson()).toList(),
+      );
       if (!mounted) return;
       setState(() {
         _products = products;
@@ -163,7 +202,9 @@ class _StockManagementViewState extends State<_StockManagementView> with Automat
   Widget build(BuildContext context) {
     super.build(context);
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator(color: const Color(0xFF5D4037)));
+      return Center(
+        child: CircularProgressIndicator(color: const Color(0xFF5D4037)),
+      );
     }
 
     if (_products.isEmpty) {
@@ -173,9 +214,19 @@ class _StockManagementViewState extends State<_StockManagementView> with Automat
           children: [
             Icon(Icons.inventory_2_outlined, size: 56, color: Colors.grey[400]),
             SizedBox(height: 12),
-            Text('Tidak ada produk', style: TextStyle(fontSize: 16, color: Colors.grey[600], fontWeight: FontWeight.w500)),
+            Text(
+              'Tidak ada produk',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             SizedBox(height: 4),
-            Text('Tambah produk melalui panel admin web', style: TextStyle(fontSize: 12, color: Colors.grey[400])),
+            Text(
+              'Tambah produk melalui panel admin web',
+              style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+            ),
             SizedBox(height: 20),
             OutlinedButton.icon(
               onPressed: () => _fetchProducts(forceRefresh: true),
@@ -221,8 +272,8 @@ class _StockManagementViewState extends State<_StockManagementView> with Automat
             final stockColor = product.stock <= 0
                 ? Colors.red
                 : product.stock <= 10
-                    ? Colors.orange
-                    : Colors.green;
+                ? Colors.orange
+                : Colors.green;
 
             return Container(
               margin: EdgeInsets.only(bottom: 8),
@@ -230,7 +281,11 @@ class _StockManagementViewState extends State<_StockManagementView> with Automat
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: Offset(0, 2))
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
                 ],
               ),
               child: Padding(
@@ -242,43 +297,86 @@ class _StockManagementViewState extends State<_StockManagementView> with Automat
                       child: product.image != null
                           ? CachedNetworkImage(
                               imageUrl: _apiService.getImageUrl(product.image),
-                              width: 44, height: 44, fit: BoxFit.cover,
-                              errorWidget: (c, u, e) => Container(width: 44, height: 44,
-                                decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(10)),
-                                child: Icon(Icons.broken_image, size: 20, color: Colors.grey)),
+                              width: 44,
+                              height: 44,
+                              fit: BoxFit.cover,
+                              errorWidget: (c, u, e) => Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  Icons.broken_image,
+                                  size: 20,
+                                  color: Colors.grey,
+                                ),
+                              ),
                             )
-                          : Container(width: 44, height: 44,
-                              decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(10)),
-                              child: Icon(Icons.fastfood, size: 20, color: Colors.grey)),
+                          : Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(
+                                Icons.fastfood,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                            ),
                     ),
                     SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(product.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                            overflow: TextOverflow.ellipsis),
+                          Text(
+                            product.name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           SizedBox(height: 2),
-                          Text(AppFormat.currency(product.price), style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                          Text(
+                            AppFormat.currency(product.price),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: stockColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: stockColor.withOpacity(0.3)),
                       ),
-                      child: Text('${product.stock}',
-                        style: TextStyle(color: stockColor, fontWeight: FontWeight.bold, fontSize: 13)),
+                      child: Text(
+                        '${product.stock}',
+                        style: TextStyle(
+                          color: stockColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -295,7 +393,14 @@ class _StockManagementViewState extends State<_StockManagementView> with Automat
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(count, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: color)),
+          Text(
+            count,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: color,
+            ),
+          ),
           SizedBox(width: 4),
           Text(label, style: TextStyle(fontSize: 11, color: color)),
         ],
@@ -311,7 +416,8 @@ class _RawMaterialsView extends StatefulWidget {
   _RawMaterialsViewState createState() => _RawMaterialsViewState();
 }
 
-class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeepAliveClientMixin {
+class _RawMaterialsViewState extends State<_RawMaterialsView>
+    with AutomaticKeepAliveClientMixin {
   final ApiService _apiService = ApiService();
   List<RawMaterial> _materials = [];
   bool _isLoading = true;
@@ -347,7 +453,9 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
   Widget build(BuildContext context) {
     super.build(context);
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator(color: const Color(0xFF5D4037)));
+      return Center(
+        child: CircularProgressIndicator(color: const Color(0xFF5D4037)),
+      );
     }
 
     if (_materials.isEmpty) {
@@ -357,7 +465,14 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
           children: [
             Icon(Icons.bakery_dining, size: 56, color: Colors.grey[400]),
             SizedBox(height: 12),
-            Text('Tidak ada bahan baku', style: TextStyle(fontSize: 16, color: Colors.grey[600], fontWeight: FontWeight.w500)),
+            Text(
+              'Tidak ada bahan baku',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             SizedBox(height: 20),
             OutlinedButton.icon(
               onPressed: _fetchMaterials,
@@ -369,7 +484,9 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
       );
     }
 
-    final lowStock = _materials.where((m) => m.isActive && m.stock <= m.minStock).length;
+    final lowStock = _materials
+        .where((m) => m.isActive && m.stock <= m.minStock)
+        .length;
 
     return RefreshIndicator(
       onRefresh: _fetchMaterials,
@@ -395,8 +512,13 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
           ),
           // Material list
           ..._materials.map((material) {
-            final isLow = material.isActive && material.stock <= material.minStock;
-            final stockColor = material.stock <= 0 ? Colors.red : isLow ? Colors.orange : Colors.green;
+            final isLow =
+                material.isActive && material.stock <= material.minStock;
+            final stockColor = material.stock <= 0
+                ? Colors.red
+                : isLow
+                ? Colors.orange
+                : Colors.green;
 
             return Container(
               margin: EdgeInsets.only(bottom: 8),
@@ -404,7 +526,11 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: Offset(0, 2))
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
                 ],
               ),
               child: InkWell(
@@ -415,19 +541,28 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
                   child: Row(
                     children: [
                       Container(
-                        width: 44, height: 44,
+                        width: 44,
+                        height: 44,
                         decoration: BoxDecoration(
                           color: Colors.amber[50],
                           borderRadius: BorderRadius.circular(10),
-                          image: material.image != null && material.image!.isNotEmpty
+                          image:
+                              material.image != null &&
+                                  material.image!.isNotEmpty
                               ? DecorationImage(
-                                  image: NetworkImage(_apiService.getImageUrl(material.image)),
+                                  image: NetworkImage(
+                                    _apiService.getImageUrl(material.image),
+                                  ),
                                   fit: BoxFit.cover,
                                 )
                               : null,
                         ),
                         child: material.image == null || material.image!.isEmpty
-                            ? Icon(Icons.bakery_dining, size: 22, color: Colors.amber[700])
+                            ? Icon(
+                                Icons.bakery_dining,
+                                size: 22,
+                                color: Colors.amber[700],
+                              )
                             : null,
                       ),
                       SizedBox(width: 12),
@@ -435,41 +570,76 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(material.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                              overflow: TextOverflow.ellipsis),
+                            Text(
+                              material.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             SizedBox(height: 2),
-                            Text('${material.stock.toStringAsFixed(material.stock == material.stock.roundToDouble() ? 0 : 1)} ${material.unit}',
-                              style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                            Text(
+                              '${material.stock.toStringAsFixed(material.stock == material.stock.roundToDouble() ? 0 : 1)} ${material.unit}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       SizedBox(width: 8),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
                         decoration: BoxDecoration(
                           color: stockColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: stockColor.withOpacity(0.3)),
+                          border: Border.all(
+                            color: stockColor.withOpacity(0.3),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(isLow ? Icons.warning_amber_rounded : Icons.check_circle_outline,
-                              size: 14, color: stockColor),
+                            Icon(
+                              isLow
+                                  ? Icons.warning_amber_rounded
+                                  : Icons.check_circle_outline,
+                              size: 14,
+                              color: stockColor,
+                            ),
                             SizedBox(width: 4),
-                            Text(material.stock <= 0 ? 'Habis' : isLow ? 'Rendah' : 'OK',
-                              style: TextStyle(color: stockColor, fontWeight: FontWeight.bold, fontSize: 12)),
+                            Text(
+                              material.stock <= 0
+                                  ? 'Habis'
+                                  : isLow
+                                  ? 'Rendah'
+                                  : 'OK',
+                              style: TextStyle(
+                                color: stockColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       SizedBox(width: 4),
-                      Icon(Icons.chevron_right, size: 20, color: Colors.grey[400]),
+                      Icon(
+                        Icons.chevron_right,
+                        size: 20,
+                        color: Colors.grey[400],
+                      ),
                     ],
                   ),
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -486,7 +656,14 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(count, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: color)),
+          Text(
+            count,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: color,
+            ),
+          ),
           SizedBox(width: 4),
           Text(label, style: TextStyle(fontSize: 11, color: color)),
         ],
@@ -499,12 +676,21 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
     final stockCtrl = TextEditingController(text: material.stock.toString());
     final unitCtrl = TextEditingController(text: material.unit);
 
-    InputDecoration _fieldDeco(String label, IconData icon) => InputDecoration(
+    InputDecoration fieldDeco(String label, IconData icon) => InputDecoration(
       labelText: label,
       prefixIcon: Icon(icon, size: 20, color: Colors.grey[600]),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey[300]!)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey[300]!)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFF5D4037), width: 2)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey[300]!),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey[300]!),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFF5D4037), width: 2),
+      ),
       fillColor: Colors.grey[50],
       filled: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -530,96 +716,139 @@ class _RawMaterialsViewState extends State<_RawMaterialsView> with AutomaticKeep
               Center(
                 child: Container(
                   margin: const EdgeInsets.only(top: 12, bottom: 20),
-                  width: 40, height: 4,
-                  decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2)),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
               // Title
-              Row(children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: const Color(0xFF5D4037).withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                  child: const Icon(Icons.bakery_dining, size: 18, color: Color(0xFF5D4037)),
-                ),
-                const SizedBox(width: 12),
-                Expanded(child: Text('Edit ${material.name}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                  overflow: TextOverflow.ellipsis)),
-              ]),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF5D4037).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.bakery_dining,
+                      size: 18,
+                      color: Color(0xFF5D4037),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Edit ${material.name}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 20),
               // Fields
               TextField(
                 controller: nameCtrl,
-                decoration: _fieldDeco('Nama Bahan', Icons.shopping_bag_outlined),
+                decoration: fieldDeco(
+                  'Nama Bahan',
+                  Icons.shopping_bag_outlined,
+                ),
                 textCapitalization: TextCapitalization.words,
               ),
               const SizedBox(height: 12),
-              Row(children: [
-                Expanded(
-                  flex: 2,
-                  child: TextField(
-                    controller: stockCtrl,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: _fieldDeco('Stok', Icons.inventory_2_outlined),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TextField(
+                      controller: stockCtrl,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      decoration: fieldDeco('Stok', Icons.inventory_2_outlined),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: unitCtrl,
-                    decoration: _fieldDeco('Satuan', Icons.straighten),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: unitCtrl,
+                      decoration: fieldDeco('Satuan', Icons.straighten),
+                    ),
                   ),
-                ),
-              ]),
+                ],
+              ),
               const SizedBox(height: 24),
               // Buttons
-              Row(children: [
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.grey[700],
-                      side: BorderSide(color: Colors.grey[300]!),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      padding: const EdgeInsets.symmetric(vertical: 13),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.grey[700],
+                        side: BorderSide(color: Colors.grey[300]!),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                      ),
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('Batal'),
                     ),
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text('Batal'),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5D4037),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      padding: const EdgeInsets.symmetric(vertical: 13),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF5D4037),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                      ),
+                      onPressed: () async {
+                        Navigator.pop(ctx);
+                        final success = await _apiService
+                            .updateRawMaterial(material.id, {
+                              'name': nameCtrl.text,
+                              'stock':
+                                  double.tryParse(stockCtrl.text) ??
+                                  material.stock,
+                              'unit': unitCtrl.text,
+                            });
+                        if (success) {
+                          PopupNotification.show(
+                            context,
+                            title: 'Berhasil Diperbarui ✏️',
+                            message: '${material.name} telah diupdate.',
+                            type: PopupType.success,
+                          );
+                          _fetchMaterials();
+                        } else {
+                          PopupNotification.show(
+                            context,
+                            title: 'Gagal Memperbarui',
+                            message: 'Tidak bisa mengupdate ${material.name}.',
+                            type: PopupType.error,
+                          );
+                        }
+                      },
+                      child: const Text(
+                        'Simpan Perubahan',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    onPressed: () async {
-                      Navigator.pop(ctx);
-                      final success = await _apiService.updateRawMaterial(material.id, {
-                        'name': nameCtrl.text,
-                        'stock': double.tryParse(stockCtrl.text) ?? material.stock,
-                        'unit': unitCtrl.text,
-                      });
-                      if (success) {
-                        PopupNotification.show(context,
-                          title: 'Berhasil Diperbarui ✏️',
-                          message: '${material.name} telah diupdate.',
-                          type: PopupType.success);
-                        _fetchMaterials();
-                      } else {
-                        PopupNotification.show(context,
-                          title: 'Gagal Memperbarui',
-                          message: 'Tidak bisa mengupdate ${material.name}.',
-                          type: PopupType.error);
-                      }
-                    },
-                    child: const Text('Simpan Perubahan', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
-                ),
-              ]),
+                ],
+              ),
             ],
           ),
         ),

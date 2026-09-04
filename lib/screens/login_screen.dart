@@ -5,6 +5,8 @@ import 'package:video_player/video_player.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -23,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _videoController.setLooping(true);
         _videoController.setVolume(0);
         _videoController.play();
-        setState(() {}); 
+        setState(() {});
       });
   }
 
@@ -39,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final loginForm = SingleChildScrollView(
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 420), 
+        constraints: const BoxConstraints(maxWidth: 420),
         margin: const EdgeInsets.all(24.0),
         padding: const EdgeInsets.all(36.0),
         decoration: BoxDecoration(
@@ -56,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, 
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Logo
@@ -72,15 +74,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.black.withOpacity(0.05),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
-                    )
+                    ),
                   ],
                 ),
                 child: ClipOval(
                   child: Image.asset(
                     'res/logo.png',
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => 
-                      const Icon(Icons.storefront, size: 50, color: Colors.black26),
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.storefront,
+                      size: 50,
+                      color: Colors.black26,
+                    ),
                   ),
                 ),
               ),
@@ -90,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Text(
               'TemanSudut',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 32, 
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
                 letterSpacing: -1,
               ),
@@ -107,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
-            
+
             // Form Fields
             _buildTextField(
               controller: _emailCtrl,
@@ -122,9 +127,9 @@ class _LoginScreenState extends State<LoginScreen> {
               icon: Icons.lock_outline,
               obscureText: true,
             ),
-            
+
             const SizedBox(height: 36),
-            
+
             // Login Button
             SizedBox(
               height: 52,
@@ -138,24 +143,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 onPressed: _isLoading ? null : _handleLogin,
-                child: _isLoading 
+                child: _isLoading
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.5,
+                        ),
                       )
                     : Text(
-                        'Masuk Sekarang', 
+                        'Masuk Sekarang',
                         style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.bold, 
+                          fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Footer
             Center(
               child: Text(
@@ -173,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.grey[50], 
+      backgroundColor: Colors.grey[50],
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isLandscape = constraints.maxWidth > 700;
@@ -190,7 +198,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: BoxDecoration(
                         color: Colors.black,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.grey[200]!, width: 1.5),
+                        border: Border.all(
+                          color: Colors.grey[200]!,
+                          width: 1.5,
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
@@ -200,7 +211,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(22.5), // sedikit lebih kecil dari outer border
+                        borderRadius: BorderRadius.circular(
+                          22.5,
+                        ), // sedikit lebih kecil dari outer border
                         child: _videoController.value.isInitialized
                             ? SizedBox.expand(
                                 child: FittedBox(
@@ -212,18 +225,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                               )
-                            : const Center(child: CircularProgressIndicator(color: Colors.white)),
+                            : const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
                   ),
                 ),
                 // Login Section (Kanan)
-                Expanded(
-                  flex: 4,
-                  child: Center(
-                    child: loginForm,
-                  ),
-                ),
+                Expanded(flex: 4, child: Center(child: loginForm)),
               ],
             );
           }
@@ -265,7 +277,10 @@ class _LoginScreenState extends State<LoginScreen> {
             prefixIcon: Icon(icon, size: 20, color: Colors.black45),
             filled: true,
             fillColor: Colors.grey[50],
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(color: Colors.grey[200]!),
@@ -295,7 +310,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
     final auth = Provider.of<AuthProvider>(context, listen: false);
     bool success = await auth.login(_emailCtrl.text, _passCtrl.text);
-    
+
     if (mounted) {
       setState(() => _isLoading = false);
       if (!success) {

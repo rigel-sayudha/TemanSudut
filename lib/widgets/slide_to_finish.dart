@@ -7,17 +7,18 @@ class SlideToFinish extends StatefulWidget {
   final bool isEnabled;
 
   const SlideToFinish({
-    Key? key,
+    super.key,
     required this.onSlideSuccess,
     this.text = 'Slide to Finish Order',
     this.isEnabled = true,
-  }) : super(key: key);
+  });
 
   @override
   State<SlideToFinish> createState() => _SlideToFinishState();
 }
 
-class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProviderStateMixin {
+class _SlideToFinishState extends State<SlideToFinish>
+    with SingleTickerProviderStateMixin {
   double _dragValue = 0.0;
   bool _isSuccess = false;
   late AnimationController _animationController;
@@ -30,7 +31,7 @@ class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProvider
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
@@ -57,7 +58,8 @@ class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProvider
         final double maxWidth = constraints.maxWidth;
         final double containerHeight = 64.0;
         final double handleSize = 56.0;
-        final double maxDrag = maxWidth - containerHeight; // Adjust for internal padding 4*2
+        final double maxDrag =
+            maxWidth - containerHeight; // Adjust for internal padding 4*2
 
         return Opacity(
           opacity: widget.isEnabled ? 1.0 : 0.4,
@@ -66,7 +68,7 @@ class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProvider
             width: maxWidth,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: _isSuccess 
+                colors: _isSuccess
                     ? [Colors.green[400]!, Colors.green[600]!]
                     : [const Color(0xFF1E1E1E), const Color(0xFF2D2D2D)],
                 begin: Alignment.centerLeft,
@@ -75,10 +77,12 @@ class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProvider
               borderRadius: BorderRadius.circular(containerHeight / 2),
               boxShadow: [
                 BoxShadow(
-                  color: (_isSuccess ? Colors.green : Colors.black).withOpacity(0.3),
+                  color: (_isSuccess ? Colors.green : Colors.black).withOpacity(
+                    0.3,
+                  ),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
-                )
+                ),
               ],
             ),
             child: Stack(
@@ -106,9 +110,13 @@ class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProvider
                           builder: (context, child) {
                             return Opacity(
                               opacity: _pulseAnimation.value,
-                              child: const Icon(Icons.double_arrow_rounded, color: Colors.white, size: 22),
+                              child: const Icon(
+                                Icons.double_arrow_rounded,
+                                color: Colors.white,
+                                size: 22,
+                              ),
                             );
-                          }
+                          },
                         ),
                       ],
                     ),
@@ -136,7 +144,9 @@ class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProvider
                       width: containerHeight + (_dragValue * maxDrag),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(containerHeight / 2),
+                        borderRadius: BorderRadius.circular(
+                          containerHeight / 2,
+                        ),
                       ),
                     ),
                   ),
@@ -152,9 +162,9 @@ class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProvider
                         _dragValue = _dragValue.clamp(0.0, 1.0);
                       });
                       if (_dragValue > 0.0 && _dragValue < 1.0) {
-                         if ((_dragValue * 100).toInt() % 15 == 0) {
-                           HapticFeedback.selectionClick();
-                         }
+                        if ((_dragValue * 100).toInt() % 15 == 0) {
+                          HapticFeedback.selectionClick();
+                        }
                       }
                     },
                     onHorizontalDragEnd: (details) {
@@ -164,10 +174,10 @@ class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProvider
                           _dragValue = 1.0;
                           _isSuccess = true;
                         });
-                        
+
                         _triggerSuccessSoundAndHaptic();
                         widget.onSlideSuccess();
-                        
+
                         Future.delayed(const Duration(milliseconds: 1500), () {
                           if (mounted) {
                             setState(() {
@@ -198,8 +208,12 @@ class _SlideToFinishState extends State<SlideToFinish> with SingleTickerProvider
                         ],
                       ),
                       child: Icon(
-                        _isSuccess ? Icons.check_circle_rounded : Icons.chevron_right_rounded,
-                        color: _isSuccess ? Colors.green[600] : const Color(0xFF2D2D2D),
+                        _isSuccess
+                            ? Icons.check_circle_rounded
+                            : Icons.chevron_right_rounded,
+                        color: _isSuccess
+                            ? Colors.green[600]
+                            : const Color(0xFF2D2D2D),
                         size: 32,
                       ),
                     ),

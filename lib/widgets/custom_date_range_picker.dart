@@ -7,10 +7,10 @@ class CustomDateRangePicker extends StatefulWidget {
   final DateTime? initialEndDate;
 
   const CustomDateRangePicker({
-    Key? key,
+    super.key,
     this.initialStartDate,
     this.initialEndDate,
-  }) : super(key: key);
+  });
 
   static Future<DateTimeRange?> show(
     BuildContext context, {
@@ -43,7 +43,10 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
     super.initState();
     _startDate = widget.initialStartDate;
     _endDate = widget.initialEndDate;
-    _currentMonth = DateTime(_startDate?.year ?? _today.year, _startDate?.month ?? _today.month);
+    _currentMonth = DateTime(
+      _startDate?.year ?? _today.year,
+      _startDate?.month ?? _today.month,
+    );
   }
 
   void _nextMonth() {
@@ -98,15 +101,16 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
           const SizedBox(height: 24),
           Text(
             'Pilih Rentang Tanggal',
-            style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.bold),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 24),
           _buildHeader(),
           const SizedBox(height: 16),
           _buildDaysOfWeek(),
-          Expanded(
-            child: _buildCalendarGrid(),
-          ),
+          Expanded(child: _buildCalendarGrid()),
           _buildBottomAction(),
         ],
       ),
@@ -125,7 +129,10 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
           ),
           Text(
             DateFormat('MMMM yyyy', 'id').format(_currentMonth),
-            style: GoogleFonts.plusJakartaSans(fontSize: 16, fontWeight: FontWeight.w600),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.chevron_right, size: 28),
@@ -143,26 +150,35 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: days
-            .map((day) => Expanded(
-                  child: Center(
-                    child: Text(
-                      day,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[500],
-                      ),
+            .map(
+              (day) => Expanded(
+                child: Center(
+                  child: Text(
+                    day,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[500],
                     ),
                   ),
-                ))
+                ),
+              ),
+            )
             .toList(),
       ),
     );
   }
 
   Widget _buildCalendarGrid() {
-    final daysInMonth = DateUtils.getDaysInMonth(_currentMonth.year, _currentMonth.month);
-    final firstDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month, 1);
+    final daysInMonth = DateUtils.getDaysInMonth(
+      _currentMonth.year,
+      _currentMonth.month,
+    );
+    final firstDayOfMonth = DateTime(
+      _currentMonth.year,
+      _currentMonth.month,
+      1,
+    );
     // 1 = Monday, 7 = Sunday
     final firstDayWeekday = firstDayOfMonth.weekday;
 
@@ -183,7 +199,7 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
 
         final day = index - (firstDayWeekday - 1) + 1;
         final date = DateTime(_currentMonth.year, _currentMonth.month, day);
-        
+
         return _buildDayCell(date);
       },
     );
@@ -218,9 +234,11 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
         '${date.day}',
         style: GoogleFonts.plusJakartaSans(
           fontSize: 15,
-          fontWeight: isSelected || isToday ? FontWeight.w600 : FontWeight.normal,
-          color: isSelected 
-              ? Colors.white 
+          fontWeight: isSelected || isToday
+              ? FontWeight.w600
+              : FontWeight.normal,
+          color: isSelected
+              ? Colors.white
               : (isToday ? const Color(0xFF5D4037) : Colors.black87),
         ),
       ),
@@ -243,7 +261,7 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                 color: const Color(0xFF5D4037).withOpacity(0.15),
               ),
             ),
-          
+
           // Selection circle
           if (isSelected)
             Container(
@@ -263,7 +281,7 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                 shape: BoxShape.circle,
               ),
             ),
-            
+
           content,
         ],
       ),
@@ -274,7 +292,8 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
     String selectedText = 'Pilih Tanggal';
     if (_startDate != null) {
       if (_endDate != null) {
-        selectedText = '${DateFormat('dd MMM').format(_startDate!)} - ${DateFormat('dd MMM').format(_endDate!)}';
+        selectedText =
+            '${DateFormat('dd MMM').format(_startDate!)} - ${DateFormat('dd MMM').format(_endDate!)}';
       } else {
         selectedText = DateFormat('dd MMM yyyy').format(_startDate!);
       }
@@ -328,7 +347,9 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
               ),
               elevation: 0,
             ),
-            onPressed: (_startDate != null && _endDate != null) || (_startDate != null && _endDate == null)
+            onPressed:
+                (_startDate != null && _endDate != null) ||
+                    (_startDate != null && _endDate == null)
                 ? () {
                     Navigator.pop(
                       context,

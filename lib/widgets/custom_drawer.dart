@@ -6,6 +6,8 @@ import '../utils/app_format.dart';
 import 'line_popup.dart';
 
 class CustomDrawer extends StatelessWidget {
+  const CustomDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<AuthProvider, CartProvider>(
@@ -23,13 +25,30 @@ class CustomDrawer extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Hi, $userName', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                      Text(
+                        'Hi, $userName',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       if (auth.isOwner) ...[
                         SizedBox(height: 24),
-                        Text('Revenue', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                        Text(
+                          'Revenue',
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                        ),
                         SizedBox(height: 8),
-                        Text('\$35.85', style: TextStyle(color: Colors.greenAccent, fontSize: 24, fontWeight: FontWeight.bold)), // Placeholder for actual revenue
-                      ]
+                        Text(
+                          '\$35.85',
+                          style: TextStyle(
+                            color: Colors.greenAccent,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ), // Placeholder for actual revenue
+                      ],
                     ],
                   ),
                 ),
@@ -60,8 +79,12 @@ class CustomDrawer extends StatelessWidget {
                     children: [
                       Text('English', style: TextStyle(color: Colors.grey)),
                       SizedBox(width: 8),
-                      Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.grey),
-                    ]
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
+                    ],
                   ),
                   onTap: () {},
                 ),
@@ -69,16 +92,25 @@ class CustomDrawer extends StatelessWidget {
                   leading: Icon(Icons.light_mode_outlined),
                   title: Text('Light Mode'),
                   trailing: Switch(
-                    value: false, 
+                    value: false,
                     onChanged: (val) {},
-                    activeColor: const Color(0xFF5D4037),
+                    activeThumbColor: const Color(0xFF5D4037),
                   ),
                 ),
                 Spacer(),
                 if (cart.isShiftOpen)
                   ListTile(
-                    leading: Icon(Icons.point_of_sale_rounded, color: Colors.orange[700]),
-                    title: Text('Tutup Kasir', style: TextStyle(color: Colors.orange[700], fontWeight: FontWeight.w600)),
+                    leading: Icon(
+                      Icons.point_of_sale_rounded,
+                      color: Colors.orange[700],
+                    ),
+                    title: Text(
+                      'Tutup Kasir',
+                      style: TextStyle(
+                        color: Colors.orange[700],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     onTap: () {
                       Navigator.of(context).pop();
                       _showCloseShiftDialog(context, cart);
@@ -86,12 +118,16 @@ class CustomDrawer extends StatelessWidget {
                   ),
                 ListTile(
                   leading: Icon(Icons.logout, color: Colors.redAccent),
-                  title: Text('Logout', style: TextStyle(color: Colors.redAccent)),
+                  title: Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
                   onTap: () {
                     LinePopup.showDual(
                       context,
                       title: 'Keluar dari Akun?',
-                      description: 'Anda akan logout dari aplikasi dan perlu login kembali.',
+                      description:
+                          'Anda akan logout dari aplikasi dan perlu login kembali.',
                       dismissText: 'Batal',
                       affirmText: 'Logout',
                       affirmColor: Colors.red,
@@ -104,7 +140,7 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
         );
-      }
+      },
     );
   }
 }
@@ -113,11 +149,13 @@ void _showCloseShiftDialog(BuildContext context, CartProvider cart) {
   final shift = cart.currentShift;
   if (shift == null) return;
 
-  double startingCash = double.tryParse(shift['starting_cash']?.toString() ?? '0') ?? 0;
-  double expectedCash = double.tryParse(shift['current_cash']?.toString() ?? '0') ?? 0;
-  
+  double startingCash =
+      double.tryParse(shift['starting_cash']?.toString() ?? '0') ?? 0;
+  double expectedCash =
+      double.tryParse(shift['current_cash']?.toString() ?? '0') ?? 0;
+
   final TextEditingController endCashController = TextEditingController(
-    text: expectedCash.toInt().toString()
+    text: expectedCash.toInt().toString(),
   );
 
   showDialog(
@@ -131,7 +169,11 @@ void _showCloseShiftDialog(BuildContext context, CartProvider cart) {
         builder: (ctx, setStateDialog) {
           return LinePopup(
             title: 'Tutup Sesi Kasir',
-            icon: Icon(Icons.point_of_sale_rounded, size: 48, color: Colors.red[700]),
+            icon: Icon(
+              Icons.point_of_sale_rounded,
+              size: 48,
+              color: Colors.red[700],
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,31 +188,57 @@ void _showCloseShiftDialog(BuildContext context, CartProvider cart) {
                   ),
                   child: Column(
                     children: [
-                      _drawerSummaryRow('Modal Awal', AppFormat.currency(startingCash)),
+                      _drawerSummaryRow(
+                        'Modal Awal',
+                        AppFormat.currency(startingCash),
+                      ),
                       const SizedBox(height: 8),
-                      _drawerSummaryRow('Uang di Laci (Estimasi)', AppFormat.currency(expectedCash), highlight: true),
+                      _drawerSummaryRow(
+                        'Uang di Laci (Estimasi)',
+                        AppFormat.currency(expectedCash),
+                        highlight: true,
+                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Text('Uang Fisik di Laci', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                const Text(
+                  'Uang Fisik di Laci',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
                 const SizedBox(height: 8),
                 TextField(
                   controller: endCashController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     prefixText: 'Rp ',
-                    prefixStyle: const TextStyle(color: Color(0xFF5D4037), fontWeight: FontWeight.bold),
+                    prefixStyle: const TextStyle(
+                      color: Color(0xFF5D4037),
+                      fontWeight: FontWeight.bold,
+                    ),
                     hintText: '0',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey[300]!)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey[300]!)),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFF5D4037), width: 2)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF5D4037),
+                        width: 2,
+                      ),
+                    ),
                     filled: true,
                     fillColor: Colors.grey[50],
                   ),
                   onChanged: (val) {
                     setStateDialog(() {
-                      enteredCash = double.tryParse(val.replaceAll(',', '')) ?? 0;
+                      enteredCash =
+                          double.tryParse(val.replaceAll(',', '')) ?? 0;
                       difference = enteredCash - expectedCash;
                     });
                   },
@@ -181,9 +249,15 @@ void _showCloseShiftDialog(BuildContext context, CartProvider cart) {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: difference >= 0 ? Colors.green[50] : Colors.red[50],
+                      color: difference >= 0
+                          ? Colors.green[50]
+                          : Colors.red[50],
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: difference >= 0 ? Colors.green[200]! : Colors.red[200]!),
+                      border: Border.all(
+                        color: difference >= 0
+                            ? Colors.green[200]!
+                            : Colors.red[200]!,
+                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -192,7 +266,9 @@ void _showCloseShiftDialog(BuildContext context, CartProvider cart) {
                           difference >= 0 ? 'Selisih Lebih' : 'Selisih Kurang',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: difference >= 0 ? Colors.green[700] : Colors.red[700],
+                            color: difference >= 0
+                                ? Colors.green[700]
+                                : Colors.red[700],
                           ),
                         ),
                         Text(
@@ -200,7 +276,9 @@ void _showCloseShiftDialog(BuildContext context, CartProvider cart) {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            color: difference >= 0 ? Colors.green[700] : Colors.red[700],
+                            color: difference >= 0
+                                ? Colors.green[700]
+                                : Colors.red[700],
                           ),
                         ),
                       ],
@@ -220,14 +298,24 @@ void _showCloseShiftDialog(BuildContext context, CartProvider cart) {
                 style: LinePopupActionStyle.filled,
                 color: Colors.red[700],
                 onTap: () async {
-                  double endingCash = double.tryParse(endCashController.text.replaceAll(',', '')) ?? 0;
+                  double endingCash =
+                      double.tryParse(
+                        endCashController.text.replaceAll(',', ''),
+                      ) ??
+                      0;
                   Navigator.of(dialogContext).pop();
                   bool success = await cart.closeShift(endingCash);
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(success ? 'Kasir berhasil ditutup.' : 'Gagal menutup kasir. Coba lagi.'),
-                      backgroundColor: success ? Colors.green : Colors.red,
-                    ));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          success
+                              ? 'Kasir berhasil ditutup.'
+                              : 'Gagal menutup kasir. Coba lagi.',
+                        ),
+                        backgroundColor: success ? Colors.green : Colors.red,
+                      ),
+                    );
                   }
                 },
               ),
@@ -244,7 +332,13 @@ Widget _drawerSummaryRow(String label, String value, {bool highlight = false}) {
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-      Text(value, style: TextStyle(fontWeight: highlight ? FontWeight.bold : FontWeight.w500, fontSize: 13)),
+      Text(
+        value,
+        style: TextStyle(
+          fontWeight: highlight ? FontWeight.bold : FontWeight.w500,
+          fontSize: 13,
+        ),
+      ),
     ],
   );
 }

@@ -16,27 +16,31 @@ class ApiService {
   late final Dio _dio;
 
   ApiService._internal() {
-    _dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
 
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        if (options.headers['Authorization'] == null) {
-          final prefs = await SharedPreferences.getInstance();
-          
-          final token = prefs.getString('auth_token');
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          if (options.headers['Authorization'] == null) {
+            final prefs = await SharedPreferences.getInstance();
+
+            final token = prefs.getString('auth_token');
+            if (token != null) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
           }
-        }
-        handler.next(options);
-      },
-    ));
+          handler.next(options);
+        },
+      ),
+    );
   }
 
   void setToken(String token) {
@@ -64,10 +68,10 @@ class ApiService {
 
   Future<Map<String, dynamic>?> login(String email, String password) async {
     try {
-      final response = await _dio.post('/login', data: {
-        'email': email,
-        'password': password,
-      });
+      final response = await _dio.post(
+        '/login',
+        data: {'email': email, 'password': password},
+      );
       print('Login Success Response: ${response.data}');
       return response.data;
     } catch (e) {
@@ -98,7 +102,10 @@ class ApiService {
 
   Future<Map<String, dynamic>> updateProfile(String name, String email) async {
     try {
-      final response = await _dio.put('/profile', data: {'name': name, 'email': email});
+      final response = await _dio.put(
+        '/profile',
+        data: {'name': name, 'email': email},
+      );
       return {'success': true, 'user': response.data['user']};
     } on DioException catch (e) {
       final msg = e.response?.data?['message'] ?? 'Gagal memperbarui profil.';
@@ -108,13 +115,19 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> changePassword(String currentPassword, String newPassword) async {
+  Future<Map<String, dynamic>> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
     try {
-      await _dio.put('/profile/password', data: {
-        'current_password': currentPassword,
-        'new_password': newPassword,
-        'new_password_confirmation': newPassword,
-      });
+      await _dio.put(
+        '/profile/password',
+        data: {
+          'current_password': currentPassword,
+          'new_password': newPassword,
+          'new_password_confirmation': newPassword,
+        },
+      );
       return {'success': true};
     } on DioException catch (e) {
       final msg = e.response?.data?['message'] ?? 'Gagal mengubah password.';
@@ -137,7 +150,10 @@ class ApiService {
 
   Future<List<dynamic>> getHistory(String filter) async {
     try {
-      final response = await _dio.get('/transactions/history', queryParameters: {'filter': filter});
+      final response = await _dio.get(
+        '/transactions/history',
+        queryParameters: {'filter': filter},
+      );
       return response.data;
     } catch (e) {
       print('Failed to get history: $e');
@@ -155,7 +171,14 @@ class ApiService {
     }
   }
 
-  Future<bool> updateTransactionStatus(int id, String status, {dynamic photo, String? orderType, double? amountReceived, double? changeAmount}) async {
+  Future<bool> updateTransactionStatus(
+    int id,
+    String status, {
+    dynamic photo,
+    String? orderType,
+    double? amountReceived,
+    double? changeAmount,
+  }) async {
     try {
       Response response;
       if (photo != null) {
@@ -163,15 +186,15 @@ class ApiService {
         final xfile = photo as dynamic;
         final bytes = await xfile.readAsBytes();
         final base64Image = base64Encode(bytes);
-        
+
         response = await _dio.put(
           '/transactions/$id/status',
           data: {
             'kitchen_status': status,
             'completion_photo_base64': base64Image,
-            if (orderType != null) 'order_type': orderType,
-            if (amountReceived != null) 'amount_received': amountReceived,
-            if (changeAmount != null) 'change_amount': changeAmount,
+            'order_type': ?orderType,
+            'amount_received': ?amountReceived,
+            'change_amount': ?changeAmount,
           },
         );
       } else {
@@ -179,10 +202,11 @@ class ApiService {
           '/transactions/$id/status',
           data: {
             'kitchen_status': status,
-            'completion_photo_base64': 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
-            if (orderType != null) 'order_type': orderType,
-            if (amountReceived != null) 'amount_received': amountReceived,
-            if (changeAmount != null) 'change_amount': changeAmount,
+            'completion_photo_base64':
+                'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
+            'order_type': ?orderType,
+            'amount_received': ?amountReceived,
+            'change_amount': ?changeAmount,
           },
         );
       }
@@ -207,7 +231,9 @@ class ApiService {
 
   // ── Saved (Held) Transactions ────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> saveTransaction(Map<String, dynamic> payload) async {
+  Future<Map<String, dynamic>> saveTransaction(
+    Map<String, dynamic> payload,
+  ) async {
     try {
       print('=== SAVE TRANSACTION REQUEST ===');
       print('Payload: $payload');
@@ -249,9 +275,15 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> activateSavedTransaction(int id, Map<String, dynamic> payload) async {
+  Future<Map<String, dynamic>> activateSavedTransaction(
+    int id,
+    Map<String, dynamic> payload,
+  ) async {
     try {
-      final response = await _dio.post('/transactions/saved/$id/activate', data: payload);
+      final response = await _dio.post(
+        '/transactions/saved/$id/activate',
+        data: payload,
+      );
       return response.data ?? {'success': false};
     } catch (e) {
       if (e is DioException) {
@@ -271,7 +303,7 @@ class ApiService {
     } catch (e) {
       print('Failed to load categories: $e');
       return [];
-    }  
+    }
   }
 
   Future<List<Product>> getProducts({int? categoryId, String? search}) async {
@@ -279,7 +311,7 @@ class ApiService {
       final response = await _dio.get(
         '/products',
         queryParameters: {
-          if (categoryId != null) 'category_id': categoryId,
+          'category_id': ?categoryId,
           if (search != null && search.isNotEmpty) 'search': search,
         },
       );
@@ -313,13 +345,17 @@ class ApiService {
   }
 
   /// Returns {'success': true} on success, or {'success': false, 'error': '...', 'details': [...]} on failure
-  Future<Map<String, dynamic>> createTransaction(Map<String, dynamic> transactionData, {dynamic photo}) async {
+  Future<Map<String, dynamic>> createTransaction(
+    Map<String, dynamic> transactionData, {
+    dynamic photo,
+  }) async {
     try {
       if (photo != null) {
         final xfile = photo as dynamic;
         final bytes = await xfile.readAsBytes();
         final base64Image = base64Encode(bytes);
-        transactionData['completion_photo_base64'] = 'data:image/jpeg;base64,$base64Image';
+        transactionData['completion_photo_base64'] =
+            'data:image/jpeg;base64,$base64Image';
       }
       final response = await _dio.post('/transactions', data: transactionData);
       return {'success': response.statusCode == 201};
@@ -408,7 +444,8 @@ class ApiService {
         '/shifts/open',
         data: {'starting_cash': startingCash},
       );
-      return (response.statusCode == 200 || response.statusCode == 201) && response.data['status'] == 'success';
+      return (response.statusCode == 200 || response.statusCode == 201) &&
+          response.data['status'] == 'success';
     } catch (e) {
       print('Failed to open shift: $e');
       return false;
@@ -453,18 +490,26 @@ class ApiService {
 
   // ---- Finance Entries ----
 
-  Future<List<dynamic>> getFinanceEntries({String? type, String? category, String? date, Map<String, String>? dateRange}) async {
+  Future<List<dynamic>> getFinanceEntries({
+    String? type,
+    String? category,
+    String? date,
+    Map<String, String>? dateRange,
+  }) async {
     try {
       String? filterParam;
       if (dateRange != null) {
         filterParam = 'date_range:${dateRange['start']},${dateRange['end']}';
       }
-      final response = await _dio.get('/finance-entries', queryParameters: {
-        if (type != null && type.isNotEmpty) 'type': type,
-        if (category != null && category.isNotEmpty) 'category': category,
-        if (date != null && date.isNotEmpty) 'date': date,
-        if (filterParam != null) 'filter': filterParam,
-      });
+      final response = await _dio.get(
+        '/finance-entries',
+        queryParameters: {
+          if (type != null && type.isNotEmpty) 'type': type,
+          if (category != null && category.isNotEmpty) 'category': category,
+          if (date != null && date.isNotEmpty) 'date': date,
+          'filter': ?filterParam,
+        },
+      );
       return response.data as List;
     } catch (e) {
       print('Failed to get finance entries: $e');
@@ -502,17 +547,25 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>?> getFinanceSummary(String filter, {String? specificDate, Map<String, String>? dateRange}) async {
+  Future<Map<String, dynamic>?> getFinanceSummary(
+    String filter, {
+    String? specificDate,
+    Map<String, String>? dateRange,
+  }) async {
     try {
       String effectiveFilter;
       if (dateRange != null) {
-        effectiveFilter = 'date_range:${dateRange['start']},${dateRange['end']}';
+        effectiveFilter =
+            'date_range:${dateRange['start']},${dateRange['end']}';
       } else if (specificDate != null) {
         effectiveFilter = 'date:$specificDate';
       } else {
         effectiveFilter = filter;
       }
-      final response = await _dio.get('/finance-entries/summary', queryParameters: {'filter': effectiveFilter});
+      final response = await _dio.get(
+        '/finance-entries/summary',
+        queryParameters: {'filter': effectiveFilter},
+      );
       return response.data as Map<String, dynamic>;
     } catch (e) {
       print('Failed to get finance summary: $e');
@@ -522,7 +575,10 @@ class ApiService {
 
   Future<Map<String, dynamic>?> getFinanceChart(String period) async {
     try {
-      final response = await _dio.get('/finance-entries/chart', queryParameters: {'period': period});
+      final response = await _dio.get(
+        '/finance-entries/chart',
+        queryParameters: {'period': period},
+      );
       return response.data as Map<String, dynamic>;
     } catch (e) {
       print('Failed to get finance chart: $e');
@@ -530,4 +586,3 @@ class ApiService {
     }
   }
 }
-

@@ -8,13 +8,13 @@ class FloatingBottomNav extends StatelessWidget {
   final Color inactiveColor;
 
   const FloatingBottomNav({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.items,
     required this.onTap,
     this.activeColor = const Color(0xFF5D4037),
     this.inactiveColor = Colors.grey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,9 @@ class FloatingBottomNav extends StatelessWidget {
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeOutBack,
                               child: Icon(
-                                isSelected ? items[index].activeIcon : items[index].icon,
+                                isSelected
+                                    ? items[index].activeIcon
+                                    : items[index].icon,
                                 color: isSelected ? activeColor : inactiveColor,
                                 size: 26,
                               ),

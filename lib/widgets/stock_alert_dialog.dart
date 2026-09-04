@@ -1,17 +1,15 @@
 ﻿import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import '../models/product.dart';
-import '../models/raw_material.dart';
 
 class StockAlertDialog extends StatefulWidget {
   final String title;
   final String message;
 
   const StockAlertDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
-  }) : super(key: key);
+  });
 
   @override
   State<StockAlertDialog> createState() => _StockAlertDialogState();
@@ -35,16 +33,24 @@ class _StockAlertDialogState extends State<StockAlertDialog> {
       final materials = await api.getRawMaterials();
 
       debugPrint('DEBUG StockAlertDialog: Fetched ${products.length} products');
-      debugPrint('DEBUG StockAlertDialog: Fetched ${materials.length} raw materials');
+      debugPrint(
+        'DEBUG StockAlertDialog: Fetched ${materials.length} raw materials',
+      );
 
       if (mounted) {
         setState(() {
-          _lowStockProducts = products.where((p) => p.isActive && p.stock <= 5).length;
-          _lowStockMaterials = materials.where((m) => m.isActive && m.stock <= m.minStock).length;
+          _lowStockProducts = products
+              .where((p) => p.isActive && p.stock <= 5)
+              .length;
+          _lowStockMaterials = materials
+              .where((m) => m.isActive && m.stock <= m.minStock)
+              .length;
           _isLoading = false;
         });
         debugPrint('DEBUG StockAlertDialog: Low Products = $_lowStockProducts');
-        debugPrint('DEBUG StockAlertDialog: Low Materials = $_lowStockMaterials');
+        debugPrint(
+          'DEBUG StockAlertDialog: Low Materials = $_lowStockMaterials',
+        );
       }
     } catch (e, stack) {
       debugPrint('DEBUG StockAlertDialog Error: $e');
@@ -67,13 +73,21 @@ class _StockAlertDialogState extends State<StockAlertDialog> {
               color: Colors.amber[100],
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.inventory_2_outlined, color: Colors.amber[900], size: 24),
+            child: Icon(
+              Icons.inventory_2_outlined,
+              color: Colors.amber[900],
+              size: 24,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               widget.title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, letterSpacing: -0.5),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                letterSpacing: -0.5,
+              ),
             ),
           ),
         ],
@@ -88,7 +102,12 @@ class _StockAlertDialogState extends State<StockAlertDialog> {
           ),
           const SizedBox(height: 24),
           _isLoading
-              ? const Center(child: CircularProgressIndicator(color: Colors.black, strokeWidth: 3))
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                    strokeWidth: 3,
+                  ),
+                )
               : Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -102,7 +121,9 @@ class _StockAlertDialogState extends State<StockAlertDialog> {
                         Icons.fastfood_outlined,
                         'Produk Menipis',
                         _lowStockProducts,
-                        _lowStockProducts > 0 ? Colors.red[700]! : Colors.green[700]!,
+                        _lowStockProducts > 0
+                            ? Colors.red[700]!
+                            : Colors.green[700]!,
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 12.0),
@@ -112,7 +133,9 @@ class _StockAlertDialogState extends State<StockAlertDialog> {
                         Icons.kitchen_outlined,
                         'Bahan Baku Menipis',
                         _lowStockMaterials,
-                        _lowStockMaterials > 0 ? Colors.orange[700]! : Colors.green[700]!,
+                        _lowStockMaterials > 0
+                            ? Colors.orange[700]!
+                            : Colors.green[700]!,
                       ),
                     ],
                   ),
@@ -127,11 +150,16 @@ class _StockAlertDialogState extends State<StockAlertDialog> {
               backgroundColor: const Color(0xFF5D4037),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               elevation: 0,
             ),
             onPressed: () => Navigator.pop(context),
-            child: const Text('Tutup', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            child: const Text(
+              'Tutup',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
           ),
         ),
       ],
@@ -158,7 +186,11 @@ class _StockAlertDialogState extends State<StockAlertDialog> {
           ),
           child: Text(
             count.toString(),
-            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14),
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
           ),
         ),
       ],

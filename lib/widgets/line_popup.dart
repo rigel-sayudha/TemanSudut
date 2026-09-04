@@ -10,13 +10,13 @@ class LinePopup extends StatelessWidget {
   final List<LinePopupAction> actions;
 
   const LinePopup({
-    Key? key,
+    super.key,
     required this.title,
     this.description,
     this.icon,
     this.content,
     this.actions = const [],
-  }) : super(key: key);
+  });
 
   /// Show a simple confirmation popup (single button).
   static Future<void> showConfirm(
@@ -114,23 +114,27 @@ class LinePopup extends StatelessWidget {
       ),
     ];
     if (secondaryText != null) {
-      actions.add(LinePopupAction(
-        label: secondaryText,
-        style: LinePopupActionStyle.outlined,
+      actions.add(
+        LinePopupAction(
+          label: secondaryText,
+          style: LinePopupActionStyle.outlined,
+          onTap: () {
+            Navigator.of(context).pop();
+            onSecondary?.call();
+          },
+        ),
+      );
+    }
+    actions.add(
+      LinePopupAction(
+        label: cancelText,
+        style: LinePopupActionStyle.textBold,
         onTap: () {
           Navigator.of(context).pop();
-          onSecondary?.call();
+          onCancel?.call();
         },
-      ));
-    }
-    actions.add(LinePopupAction(
-      label: cancelText,
-      style: LinePopupActionStyle.textBold,
-      onTap: () {
-        Navigator.of(context).pop();
-        onCancel?.call();
-      },
-    ));
+      ),
+    );
 
     return showDialog<T>(
       context: context,
@@ -155,38 +159,47 @@ class LinePopup extends StatelessWidget {
     Color? affirmColor,
   }) async {
     return (await showDialog<bool>(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.4),
-      builder: (_) => LinePopup(
-        title: title,
-        description: description,
-        icon: icon,
-        actions: [
-          LinePopupAction(
-            label: dismissText,
-            style: LinePopupActionStyle.textNormal,
-            onTap: () => Navigator.of(context).pop(false),
+          context: context,
+          barrierColor: Colors.black.withOpacity(0.4),
+          builder: (_) => LinePopup(
+            title: title,
+            description: description,
+            icon: icon,
+            actions: [
+              LinePopupAction(
+                label: dismissText,
+                style: LinePopupActionStyle.textNormal,
+                onTap: () => Navigator.of(context).pop(false),
+              ),
+              LinePopupAction(
+                label: affirmText,
+                style: LinePopupActionStyle.textBold,
+                color: affirmColor ?? const Color(0xFF5D4037),
+                onTap: () => Navigator.of(context).pop(true),
+              ),
+            ],
           ),
-          LinePopupAction(
-            label: affirmText,
-            style: LinePopupActionStyle.textBold,
-            color: affirmColor ?? const Color(0xFF5D4037),
-            onTap: () => Navigator.of(context).pop(true),
-          ),
-        ],
-      ),
-    )) ?? false;
+        )) ??
+        false;
   }
 
   @override
   Widget build(BuildContext context) {
     // Separate text-style actions (inline row) from button-style actions (stacked)
-    final inlineActions = actions.where((a) =>
-      a.style == LinePopupActionStyle.textBold ||
-      a.style == LinePopupActionStyle.textNormal).toList();
-    final buttonActions = actions.where((a) =>
-      a.style == LinePopupActionStyle.filled ||
-      a.style == LinePopupActionStyle.outlined).toList();
+    final inlineActions = actions
+        .where(
+          (a) =>
+              a.style == LinePopupActionStyle.textBold ||
+              a.style == LinePopupActionStyle.textNormal,
+        )
+        .toList();
+    final buttonActions = actions
+        .where(
+          (a) =>
+              a.style == LinePopupActionStyle.filled ||
+              a.style == LinePopupActionStyle.outlined,
+        )
+        .toList();
 
     final bool hasButtons = buttonActions.isNotEmpty;
     final bool hasInline = inlineActions.isNotEmpty && !hasButtons;
@@ -203,10 +216,7 @@ class LinePopup extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Optional icon
-            if (icon != null) ...[
-              icon!,
-              const SizedBox(height: 20),
-            ],
+            if (icon != null) ...[icon!, const SizedBox(height: 20)],
             // Title
             Text(
               title,
@@ -232,33 +242,36 @@ class LinePopup extends StatelessWidget {
               ),
             ],
             // Custom Content
-            if (content != null) ...[
-              const SizedBox(height: 16),
-              content!,
-            ],
+            if (content != null) ...[const SizedBox(height: 16), content!],
             const SizedBox(height: 24),
             // Button-style actions (filled/outlined) — stacked
             if (hasButtons || hasMixed) ...[
-              ...buttonActions.map((action) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _buildButtonAction(action),
-              )),
+              ...buttonActions.map(
+                (action) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _buildButtonAction(action),
+                ),
+              ),
             ],
             // Text-style actions — inline row or single centered
             if (hasMixed) ...[
               // Cancel/dismiss text below buttons
-              ...inlineActions.map((action) => Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: _buildTextAction(action),
-              )),
+              ...inlineActions.map(
+                (action) => Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: _buildTextAction(action),
+                ),
+              ),
             ] else if (hasInline) ...[
               if (inlineActions.length == 1)
                 _buildTextAction(inlineActions.first)
               else
                 Row(
-                  children: inlineActions.map((action) => Expanded(
-                    child: _buildTextAction(action),
-                  )).toList(),
+                  children: inlineActions
+                      .map(
+                        (action) => Expanded(child: _buildTextAction(action)),
+                      )
+                      .toList(),
                 ),
             ],
           ],
@@ -278,7 +291,9 @@ class LinePopup extends StatelessWidget {
             backgroundColor: action.color ?? const Color(0xFF5D4037),
             foregroundColor: Colors.white,
             elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
           child: Text(
             action.label,
@@ -296,7 +311,9 @@ class LinePopup extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             foregroundColor: Colors.black87,
             side: BorderSide(color: Colors.grey[300]!),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
           child: Text(
             action.label,
@@ -320,7 +337,8 @@ class LinePopup extends StatelessWidget {
           fontWeight: action.style == LinePopupActionStyle.textBold
               ? FontWeight.bold
               : FontWeight.normal,
-          color: action.color ??
+          color:
+              action.color ??
               (action.style == LinePopupActionStyle.textBold
                   ? Colors.black
                   : Colors.grey[600]),
@@ -331,10 +349,10 @@ class LinePopup extends StatelessWidget {
 }
 
 enum LinePopupActionStyle {
-  textBold,    // Bold text button (confirm/affirmative)
-  textNormal,  // Normal text button (dismiss/cancel)
-  filled,      // Full-width filled button (primary action)
-  outlined,    // Full-width outlined button (secondary action)
+  textBold, // Bold text button (confirm/affirmative)
+  textNormal, // Normal text button (dismiss/cancel)
+  filled, // Full-width filled button (primary action)
+  outlined, // Full-width outlined button (secondary action)
 }
 
 class LinePopupAction {

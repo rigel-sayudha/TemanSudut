@@ -16,13 +16,18 @@ class ActiveOrdersTab extends StatefulWidget {
   final VoidCallback? onNavigateToHistory;
   final VoidCallback? onOrderCompleted;
 
-  const ActiveOrdersTab({Key? key, this.onNavigateToHistory, this.onOrderCompleted}) : super(key: key);
+  const ActiveOrdersTab({
+    super.key,
+    this.onNavigateToHistory,
+    this.onOrderCompleted,
+  });
 
   @override
   ActiveOrdersTabState createState() => ActiveOrdersTabState();
 }
 
-class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliveClientMixin {
+class ActiveOrdersTabState extends State<ActiveOrdersTab>
+    with AutomaticKeepAliveClientMixin {
   final ApiService _apiService = ApiService();
   final PrinterService _printerService = PrinterService();
   List<dynamic> _activeOrders = [];
@@ -54,7 +59,13 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
     });
   }
 
-  Future<void> _markAsCompleted(dynamic order, {XFile? photo, String? orderType, double? amountReceived, double? changeAmount}) async {
+  Future<void> _markAsCompleted(
+    dynamic order, {
+    XFile? photo,
+    String? orderType,
+    double? amountReceived,
+    double? changeAmount,
+  }) async {
     LoadingOverlay.show(context, message: 'Menyelesaikan pesanan...');
     final success = await _apiService.updateTransactionStatus(
       order['id'],
@@ -94,17 +105,20 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
     }
   }
 
-
   void _showCompletionDialog(dynamic order) {
     XFile? selectedPhoto;
     Uint8List? photoBytes;
     bool isPickingImage = false;
-    String? selectedOrderType = order['order_type'] as String?; 
+    String? selectedOrderType = order['order_type'] as String?;
 
     const orderTypes = [
-      {'value': 'dine_in',  'label': 'Dine In',  'icon': Icons.restaurant},
-      {'value': 'take_away','label': 'Take Away', 'icon': Icons.shopping_bag_outlined},
-      {'value': 'online',    'label': 'Online',    'icon': Icons.delivery_dining},
+      {'value': 'dine_in', 'label': 'Dine In', 'icon': Icons.restaurant},
+      {
+        'value': 'take_away',
+        'label': 'Take Away',
+        'icon': Icons.shopping_bag_outlined,
+      },
+      {'value': 'online', 'label': 'Online', 'icon': Icons.delivery_dining},
     ];
 
     showDialog(
@@ -133,8 +147,13 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
             }
 
             return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 40,
+                vertical: 24,
+              ),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 480),
                 child: Padding(
@@ -145,21 +164,43 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.check_circle_outline, color: Colors.green[600], size: 22),
+                          Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.green[600],
+                            size: 22,
+                          ),
                           const SizedBox(width: 8),
-                          const Text('Selesaikan Orderan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                          const Text(
+                            'Selesaikan Orderan',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text('Order #${order['id']} - ${order['customer_name'] ?? 'Tamu'}',
-                          style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+                      Text(
+                        'Order #${order['id']} - ${order['customer_name'] ?? 'Tamu'}',
+                        style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                      ),
                       const SizedBox(height: 20),
 
                       Row(
                         children: [
-                          const Icon(Icons.storefront_outlined, size: 16, color: Colors.black87),
+                          const Icon(
+                            Icons.storefront_outlined,
+                            size: 16,
+                            color: Colors.black87,
+                          ),
                           const SizedBox(width: 6),
-                          const Text('Tipe Order (Wajib)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                          const Text(
+                            'Tipe Order (Wajib)',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -168,21 +209,48 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
                           final isSelected = selectedOrderType == type['value'];
                           return Expanded(
                             child: GestureDetector(
-                              onTap: () => setDialogState(() => selectedOrderType = type['value'] as String),
+                              onTap: () => setDialogState(
+                                () =>
+                                    selectedOrderType = type['value'] as String,
+                              ),
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 180),
                                 margin: const EdgeInsets.only(right: 6),
-                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: isSelected ? Colors.black : Colors.grey[100],
+                                  color: isSelected
+                                      ? Colors.black
+                                      : Colors.grey[100],
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: isSelected ? Colors.black : Colors.grey[300]!, width: isSelected ? 2 : 1),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? Colors.black
+                                        : Colors.grey[300]!,
+                                    width: isSelected ? 2 : 1,
+                                  ),
                                 ),
                                 child: Column(
                                   children: [
-                                    Icon(type['icon'] as IconData, size: 20, color: isSelected ? Colors.white : Colors.black54),
+                                    Icon(
+                                      type['icon'] as IconData,
+                                      size: 20,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : Colors.black54,
+                                    ),
                                     const SizedBox(height: 4),
-                                    Text(type['label'] as String, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: isSelected ? Colors.white : Colors.black87)),
+                                    Text(
+                                      type['label'] as String,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors.black87,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -194,9 +262,19 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
 
                       Row(
                         children: [
-                          const Icon(Icons.camera_alt, size: 16, color: Colors.black87),
+                          const Icon(
+                            Icons.camera_alt,
+                            size: 16,
+                            color: Colors.black87,
+                          ),
                           const SizedBox(width: 6),
-                          const Text('Foto Bukti (Opsional)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                          const Text(
+                            'Foto Bukti (Opsional)',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -206,28 +284,104 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: Image.memory(photoBytes!, height: 180, width: double.infinity, fit: BoxFit.cover),
+                              child: Image.memory(
+                                photoBytes!,
+                                height: 180,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                             Positioned(
                               top: 6,
                               right: 6,
                               child: GestureDetector(
-                                onTap: () => setDialogState(() { selectedPhoto = null; photoBytes = null; }),
-                                child: Container(padding: const EdgeInsets.all(4), decoration: const BoxDecoration(color: Color(0xAA000000), shape: BoxShape.circle), child: const Icon(Icons.close, color: Colors.white, size: 18)),
+                                onTap: () => setDialogState(() {
+                                  selectedPhoto = null;
+                                  photoBytes = null;
+                                }),
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xAA000000),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         )
                       else if (isPickingImage)
                         Container(
-                          height: 100, width: double.infinity,
-                          decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(12)),
-                          child: const Center(child: Column(mainAxisSize: MainAxisSize.min, children: [CircularProgressIndicator(color: Colors.black54), SizedBox(height: 8), Text('Mengambil foto...', style: TextStyle(color: Colors.grey, fontSize: 12))])),
+                          height: 100,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(
+                                  color: Colors.black54,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Mengambil foto...',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         )
                       else
                         Row(
                           children: [
-                            Expanded(child: Material(color: Colors.grey[50], borderRadius: BorderRadius.circular(12), child: InkWell(onTap: capturePhoto, child: Container(height: 100, decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!), borderRadius: BorderRadius.circular(12)), child: const Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.camera_alt_outlined, size: 32, color: Colors.black87), SizedBox(height: 8), Text('Ambil Foto Kamera', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))]))))),
+                            Expanded(
+                              child: Material(
+                                color: Colors.grey[50],
+                                borderRadius: BorderRadius.circular(12),
+                                child: InkWell(
+                                  onTap: capturePhoto,
+                                  child: Container(
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.grey[300]!,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.camera_alt_outlined,
+                                          size: 32,
+                                          color: Colors.black87,
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Ambil Foto Kamera',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
 
@@ -236,16 +390,38 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          TextButton(onPressed: () => Navigator.pop(dialogCtx), child: Text('Batal', style: TextStyle(color: Colors.grey[600]))),
+                          TextButton(
+                            onPressed: () => Navigator.pop(dialogCtx),
+                            child: Text(
+                              'Batal',
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ),
                           const SizedBox(width: 8),
                           ElevatedButton(
                             onPressed: (selectedOrderType == null)
                                 ? null
                                 : () {
                                     Navigator.pop(dialogCtx);
-                                    _markAsCompleted(order, photo: selectedPhoto, orderType: selectedOrderType);
+                                    _markAsCompleted(
+                                      order,
+                                      photo: selectedPhoto,
+                                      orderType: selectedOrderType,
+                                    );
                                   },
-                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5D4037), foregroundColor: Colors.white, disabledBackgroundColor: Colors.grey[300], disabledForegroundColor: Colors.grey[500], padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF5D4037),
+                              foregroundColor: Colors.white,
+                              disabledBackgroundColor: Colors.grey[300],
+                              disabledForegroundColor: Colors.grey[500],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                             child: const Text('Ya, Selesai'),
                           ),
                         ],
@@ -265,7 +441,8 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
     final confirm = await LinePopup.showConfirmChoice(
       context,
       title: 'Hapus Pesanan?',
-      description: 'Apakah Anda yakin ingin menghapus pesanan #${order['id']}?\n\nAksi ini akan membatalkan pesanan dan mengembalikan stok produk.',
+      description:
+          'Apakah Anda yakin ingin menghapus pesanan #${order['id']}?\n\nAksi ini akan membatalkan pesanan dan mengembalikan stok produk.',
       dismissText: 'Batal',
       affirmText: 'Ya, Hapus',
       affirmColor: Colors.red,
@@ -274,16 +451,17 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
 
     if (!mounted) return;
     setState(() => _isLoading = true);
-    
+
     final success = await _apiService.deleteTransaction(order['id']);
-    
+
     if (!mounted) return;
-    
+
     if (success) {
       PopupNotification.show(
         context,
         title: 'Berhasil',
-        message: 'Pesanan #${order['id']} telah dibatalkan dan stok dikembalikan.',
+        message:
+            'Pesanan #${order['id']} telah dibatalkan dan stok dikembalikan.',
         type: PopupType.success,
       );
       _fetchActiveOrders();
@@ -304,7 +482,10 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('Active Orders', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Active Orders',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
@@ -313,369 +494,524 @@ class ActiveOrdersTabState extends State<ActiveOrdersTab> with AutomaticKeepAliv
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.black),
             onPressed: _fetchActiveOrders,
-          )
+          ),
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Colors.black))
           : _activeOrders.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.receipt_long_outlined, size: 64, color: Colors.grey[300]),
-                      SizedBox(height: 16),
-                      Text('Tidak ada pesanan aktif', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey[600])),
-                      SizedBox(height: 4),
-                      Text('Pesanan baru akan muncul di sini', style: TextStyle(fontSize: 13, color: Colors.grey[400])),
-                      SizedBox(height: 20),
-                      OutlinedButton.icon(
-                        onPressed: _fetchActiveOrders,
-                        icon: Icon(Icons.refresh),
-                        label: Text('Perbarui'),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.receipt_long_outlined,
+                    size: 64,
+                    color: Colors.grey[300],
                   ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _activeOrders.length,
-                  itemBuilder: (context, index) {
-                    final order = _activeOrders[index];
-                    final customerName = order['customer_name'] ?? 'Guest';
-                    final items = order['items'] as List;
-                    final status = order['kitchen_status'];
+                  SizedBox(height: 16),
+                  Text(
+                    'Tidak ada pesanan aktif',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Pesanan baru akan muncul di sini',
+                    style: TextStyle(fontSize: 13, color: Colors.grey[400]),
+                  ),
+                  SizedBox(height: 20),
+                  OutlinedButton.icon(
+                    onPressed: _fetchActiveOrders,
+                    icon: Icon(Icons.refresh),
+                    label: Text('Perbarui'),
+                  ),
+                ],
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _activeOrders.length,
+              itemBuilder: (context, index) {
+                final order = _activeOrders[index];
+                final customerName = order['customer_name'] ?? 'Guest';
+                final items = order['items'] as List;
+                final status = order['kitchen_status'];
 
-                    return FadeSlideIn(
-                      delay: Duration(milliseconds: 60 * index),
-                      child: Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    'Order #${order['id']} - $customerName',
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                return FadeSlideIn(
+                  delay: Duration(milliseconds: 60 * index),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Order #${order['id']} - $customerName',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: status == 'pending'
+                                      ? Colors.orange[100]
+                                      : Colors.blue[100],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  status.toString().toUpperCase(),
+                                  style: TextStyle(
+                                    color: status == 'pending'
+                                        ? Colors.orange[800]
+                                        : Colors.blue[800],
+                                    fontSize: 10,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: status == 'pending' ? Colors.orange[100] : Colors.blue[100],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    status.toString().toUpperCase(),
-                                    style: TextStyle(
-                                      color: status == 'pending' ? Colors.orange[800] : Colors.blue[800],
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (order['completion_photo'] != null && order['completion_photo'].toString().isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 12.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Builder(builder: (context) {
-                                    final String photoUrl = ApiService().getImageUrl(order['completion_photo']);
-                                    
+                              ),
+                            ],
+                          ),
+                          if (order['completion_photo'] != null &&
+                              order['completion_photo'].toString().isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Builder(
+                                  builder: (context) {
+                                    final String photoUrl = ApiService()
+                                        .getImageUrl(order['completion_photo']);
+
                                     return Image.network(
                                       photoUrl,
                                       height: 150,
                                       width: double.infinity,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (ctx, err, stack) => Container(
-                                        height: 150,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child: const Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.broken_image_outlined, color: Colors.grey, size: 32),
-                                            SizedBox(height: 4),
-                                            Text('Foto tidak tersedia', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ),
-                            const SizedBox(height: 12),
-                            Text('${items.length} Items:', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-                            const SizedBox(height: 8),
-                            ...items.map((item) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: Row(
+                                      errorBuilder: (ctx, err, stack) =>
+                                          Container(
+                                            height: 150,
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[100],
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: const Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    '${item['quantity']}x ${item['product'] != null ? item['product']['name'] : 'Unknown'}',
-                                                    style: const TextStyle(fontWeight: FontWeight.w500),
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
+                                                Icon(
+                                                  Icons.broken_image_outlined,
+                                                  color: Colors.grey,
+                                                  size: 32,
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  'Foto tidak tersedia',
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 12,
                                                   ),
                                                 ),
-                                                if (item['notes'] != null && item['notes'].toString().contains('[PESANAN GRATIS]')) ...[
-                                                  SizedBox(width: 6),
-                                                  Container(
-                                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                                    decoration: BoxDecoration(color: Colors.green[100], borderRadius: BorderRadius.circular(4)),
-                                                    child: Text('FREE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.green[800])),
-                                                  )
-                                                ]
                                               ],
                                             ),
                                           ),
-                                          if (item['notes'] != null && item['notes'].toString().contains('[PESANAN GRATIS]'))
-                                            Text(
-                                              'Gratis',
-                                              style: TextStyle(fontSize: 12, color: Colors.green[700], fontWeight: FontWeight.bold),
-                                            )
-                                          else
-                                            Text(
-                                              AppFormat.currency(item['subtotal'] ?? 0),
-                                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: 12),
+                          Text(
+                            '${items.length} Items:',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ...items.map(
+                            (item) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                '${item['quantity']}x ${item['product'] != null ? item['product']['name'] : 'Unknown'}',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
-                                        ],
-                                      ),
-                                      if (item['notes'] != null && item['notes'].toString().isNotEmpty && item['notes'].toString().replaceAll('[PESANAN GRATIS]', '').replaceAll('|', '').trim().isNotEmpty)
-                                        Container(
-                                          margin: const EdgeInsets.only(top: 4),
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: Colors.amber[50],
-                                            borderRadius: BorderRadius.circular(6),
-                                            border: Border.all(color: Colors.amber[100]!),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(Icons.edit_note, size: 14, color: Colors.amber[800]),
-                                              const SizedBox(width: 4),
-                                              Flexible(
+                                            if (item['notes'] != null &&
+                                                item['notes']
+                                                    .toString()
+                                                    .contains(
+                                                      '[PESANAN GRATIS]',
+                                                    )) ...[
+                                              SizedBox(width: 6),
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 6,
+                                                  vertical: 2,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.green[100],
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                ),
                                                 child: Text(
-                                                  item['notes'].toString().replaceAll(RegExp(r'\s*\|\s*\[PESANAN GRATIS\]|\[PESANAN GRATIS\]\s*\|\s*|\[PESANAN GRATIS\]'), '').trim(),
-                                                  style: TextStyle(fontSize: 11, color: Colors.amber[900], fontWeight: FontWeight.w500),
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  'FREE',
+                                                  style: TextStyle(
+                                                    fontSize: 9,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.green[800],
+                                                  ),
                                                 ),
                                               ),
                                             ],
+                                          ],
+                                        ),
+                                      ),
+                                      if (item['notes'] != null &&
+                                          item['notes'].toString().contains(
+                                            '[PESANAN GRATIS]',
+                                          ))
+                                        Text(
+                                          'Gratis',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.green[700],
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )
+                                      else
+                                        Text(
+                                          AppFormat.currency(
+                                            item['subtotal'] ?? 0,
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
                                           ),
                                         ),
                                     ],
                                   ),
-                                )),
-                            const Divider(height: 24),
-                            // Transaction Summary
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey[200]!),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Total', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-                                      Text(AppFormat.currency(order['total']), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black)),
-                                    ],
-                                  ),
-                                  if (order['amount_received'] != null && (double.tryParse(order['amount_received'].toString()) ?? 0) > 0) ...[
-                                    const SizedBox(height: 6),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text('Uang Diterima', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-                                        Text(AppFormat.currency(double.tryParse(order['amount_received'].toString()) ?? 0), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text('Kembalian', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-                                        Text(
-                                          AppFormat.currency(double.tryParse(order['change_amount']?.toString() ?? '0') ?? 0),
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.green[700]),
+                                  if (item['notes'] != null &&
+                                      item['notes'].toString().isNotEmpty &&
+                                      item['notes']
+                                          .toString()
+                                          .replaceAll('[PESANAN GRATIS]', '')
+                                          .replaceAll('|', '')
+                                          .trim()
+                                          .isNotEmpty)
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.amber[50],
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(
+                                          color: Colors.amber[100]!,
                                         ),
-                                      ],
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.edit_note,
+                                            size: 14,
+                                            color: Colors.amber[800],
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Flexible(
+                                            child: Text(
+                                              item['notes']
+                                                  .toString()
+                                                  .replaceAll(
+                                                    RegExp(
+                                                      r'\s*\|\s*\[PESANAN GRATIS\]|\[PESANAN GRATIS\]\s*\|\s*|\[PESANAN GRATIS\]',
+                                                    ),
+                                                    '',
+                                                  )
+                                                  .trim(),
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                color: Colors.amber[900],
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ],
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                          ),
+                          const Divider(height: 24),
+                          // Transaction Summary
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey[200]!),
+                            ),
+                            child: Column(
                               children: [
-                                      // Delete Order Button
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 8.0),
-                                        child: IconButton(
-                                          icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                                          tooltip: 'Hapus Pesanan',
-                                          padding: EdgeInsets.zero,
-                                          constraints: BoxConstraints(),
-                                          onPressed: () => _deleteOrder(order),
-                                        ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Total',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey[600],
                                       ),
-                                      
-                                      // Print Receipt Button for Owners
-                                      Consumer<AuthProvider>(
-                                        builder: (context, auth, _) {
-                                        if (auth.can('print_receipt') && status != 'pending') {
-                                          return Padding(
-                                            padding: const EdgeInsets.only(right: 8.0),
-                                            child: IconButton(
-                                              icon: Icon(Icons.print, size: 20, color: Colors.blue[600]),
-                                              tooltip: 'Cetak Struk',
-                                              padding: EdgeInsets.zero,
-                                              constraints: BoxConstraints(),
-                                              onPressed: () async {
-                                                if (await _printerService.isConnected) {
-                                                  try {
-                                                    await _printerService.printReceipt(transaction: order, items: items, isHistory: false);
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Mencetak struk pesanan...')));
-                                                  } catch (e) {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal mencetak: $e')));
-                                                  }
-                                                } else {
-                                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Printer belum terhubung!'), backgroundColor: Colors.red));
-                                                }
-                                              },
-                                            ),
-                                          );
-                                        }
-                                        return SizedBox.shrink();
-                                      },
                                     ),
-                                    
-                                    ElevatedButton.icon(
-                                      onPressed: () => _showCompletionDialog(order),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF5D4037),
-                                        foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      ),
-                                      icon: const Icon(Icons.camera_alt_outlined, size: 14),
-                                      label: const Text(
-                                        'Mark as Completed',
-                                        style: TextStyle(fontSize: 11),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                    Text(
+                                      AppFormat.currency(order['total']),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: Colors.black,
                                       ),
                                     ),
                                   ],
                                 ),
-                          ],
-                        ),
+                                if (order['amount_received'] != null &&
+                                    (double.tryParse(
+                                              order['amount_received']
+                                                  .toString(),
+                                            ) ??
+                                            0) >
+                                        0) ...[
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Uang Diterima',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      Text(
+                                        AppFormat.currency(
+                                          double.tryParse(
+                                                order['amount_received']
+                                                    .toString(),
+                                              ) ??
+                                              0,
+                                        ),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Kembalian',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      Text(
+                                        AppFormat.currency(
+                                          double.tryParse(
+                                                order['change_amount']
+                                                        ?.toString() ??
+                                                    '0',
+                                              ) ??
+                                              0,
+                                        ),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                          color: Colors.green[700],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // Delete Order Button
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.delete_outline,
+                                    size: 20,
+                                    color: Colors.red,
+                                  ),
+                                  tooltip: 'Hapus Pesanan',
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
+                                  onPressed: () => _deleteOrder(order),
+                                ),
+                              ),
+
+                              // Print Receipt Button for Owners
+                              Consumer<AuthProvider>(
+                                builder: (context, auth, _) {
+                                  if (auth.can('print_receipt') &&
+                                      status != 'pending') {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 8.0,
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.print,
+                                          size: 20,
+                                          color: Colors.blue[600],
+                                        ),
+                                        tooltip: 'Cetak Struk',
+                                        padding: EdgeInsets.zero,
+                                        constraints: BoxConstraints(),
+                                        onPressed: () async {
+                                          if (await _printerService
+                                              .isConnected) {
+                                            try {
+                                              await _printerService
+                                                  .printReceipt(
+                                                    transaction: order,
+                                                    items: items,
+                                                    isHistory: false,
+                                                  );
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    'Mencetak struk pesanan...',
+                                                  ),
+                                                ),
+                                              );
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    'Gagal mencetak: $e',
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Printer belum terhubung!',
+                                                ),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  }
+                                  return SizedBox.shrink();
+                                },
+                              ),
+
+                              ElevatedButton.icon(
+                                onPressed: () => _showCompletionDialog(order),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF5D4037),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                ),
+                                icon: const Icon(
+                                  Icons.camera_alt_outlined,
+                                  size: 14,
+                                ),
+                                label: const Text(
+                                  'Mark as Completed',
+                                  style: TextStyle(fontSize: 11),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),   // closes Container (inside FadeSlideIn)
-                    );   // closes FadeSlideIn
-                  },
-                ),
-    );
-  }
-}
-
-class _CameraDialog extends StatelessWidget {
-  final CameraController controller;
-
-  const _CameraDialog({Key? key, required this.controller}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: const Color(0xFF5D4037),
-      insetPadding: const EdgeInsets.all(0),
-      child: Stack(
-        children: [
-          Center(child: CameraPreview(controller)),
-          
-          // Controls
-          Positioned(
-            bottom: 30,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  onPressed: () => Navigator.pop(context, null),
-                  icon: const Icon(Icons.close, color: Colors.white, size: 32),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    try {
-                      final image = await controller.takePicture();
-                      if (context.mounted) {
-                        Navigator.pop(context, image);
-                      }
-                    } catch (e) {
-                      debugPrint('Error taking picture: $e');
-                    }
-                  },
-                  child: Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 4),
                     ),
-                    child: Center(
-                      child: Container(
-                        width: 54,
-                        height: 54,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 48), // Spacer for centering
-              ],
+                  ), // closes Container (inside FadeSlideIn)
+                ); // closes FadeSlideIn
+              },
             ),
-          ),
-        ],
-      ),
-   
     );
   }
 }

@@ -7,12 +7,12 @@ class FadeSlideIn extends StatefulWidget {
   final Offset begin;
 
   const FadeSlideIn({
-    Key? key,
+    super.key,
     required this.child,
     this.delay = Duration.zero,
     this.duration = const Duration(milliseconds: 350),
     this.begin = const Offset(0, 0.12),
-  }) : super(key: key);
+  });
 
   @override
   State<FadeSlideIn> createState() => _FadeSlideInState();
@@ -29,9 +29,10 @@ class _FadeSlideInState extends State<FadeSlideIn>
     super.initState();
     _ctrl = AnimationController(vsync: this, duration: widget.duration);
     _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
-    _slide = Tween<Offset>(begin: widget.begin, end: Offset.zero).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic),
-    );
+    _slide = Tween<Offset>(
+      begin: widget.begin,
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
 
     if (widget.delay == Duration.zero) {
       _ctrl.forward();
@@ -64,11 +65,11 @@ class AnimatedBounceButton extends StatefulWidget {
   final double scaleTo;
 
   const AnimatedBounceButton({
-    Key? key,
+    super.key,
     required this.child,
     this.onTap,
     this.scaleTo = 0.88,
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedBounceButton> createState() => _AnimatedBounceButtonState();
@@ -86,9 +87,10 @@ class _AnimatedBounceButtonState extends State<AnimatedBounceButton>
       vsync: this,
       duration: const Duration(milliseconds: 120),
     );
-    _scale = Tween<double>(begin: 1.0, end: widget.scaleTo).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
-    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: widget.scaleTo,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -113,7 +115,8 @@ class _AnimatedBounceButtonState extends State<AnimatedBounceButton>
           : null,
       child: AnimatedBuilder(
         animation: _scale,
-        builder: (_, child) => Transform.scale(scale: _scale.value, child: child),
+        builder: (_, child) =>
+            Transform.scale(scale: _scale.value, child: child),
         child: widget.child,
       ),
     );
@@ -126,10 +129,10 @@ class AnimatedIndexedStack extends StatefulWidget {
   final List<Widget> children;
 
   const AnimatedIndexedStack({
-    Key? key,
+    super.key,
     required this.index,
     required this.children,
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedIndexedStack> createState() => _AnimatedIndexedStackState();

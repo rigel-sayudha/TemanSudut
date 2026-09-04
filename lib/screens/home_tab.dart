@@ -12,13 +12,14 @@ import '../widgets/popup_notification.dart';
 import '../utils/app_animations.dart';
 
 class HomeTab extends StatefulWidget {
+  const HomeTab({super.key});
+
   @override
   State<HomeTab> createState() => _HomeTabState();
 }
 
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   final TextEditingController _searchController = TextEditingController();
-  bool _isSearching = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -35,104 +36,123 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     return Consumer<CartProvider>(
       builder: (context, cart, child) {
         return Scaffold(
-          backgroundColor: Colors.grey[50], 
+          backgroundColor: Colors.grey[50],
           body: RefreshIndicator(
-           color: const Color(0xFF5D4037),
+            color: const Color(0xFF5D4037),
             onRefresh: () => cart.refreshProducts(),
             child: CustomScrollView(
-            slivers: [
-              // Header Section
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 48, bottom: 16),
-                  child: MediaQuery.of(context).size.width > 800
-                      ? _buildTabletHeader(context, cart)
-                      : _buildMobileHeader(context, cart),
-                ),
-              ),
-              
-              // Categories Section
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 48,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          clipBehavior: Clip.none,
-                          children: [
-                                _buildCategoryItem(
-                                  'All', cart.selectedCategory == null, 
-                                  () => cart.filterByCategory(null),
-                                ),
-                                ...cart.categories.map((cat) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(left: 10.0),
-                                    child: _buildCategoryItem(
-                                      cat.name,
-                                      cart.selectedCategory?.id == cat.id,
-                                      () => cart.filterByCategory(cat),
-                                    ),
-                              );
-                            }).toList(),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 24),
-                    ],
+              slivers: [
+                // Header Section
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20.0,
+                      right: 20.0,
+                      top: 48,
+                      bottom: 16,
+                    ),
+                    child: MediaQuery.of(context).size.width > 800
+                        ? _buildTabletHeader(context, cart)
+                        : _buildMobileHeader(context, cart),
                   ),
                 ),
-              ),
-              
-              // Products Section
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                sliver: cart.availableProducts.isEmpty
-                    ? SliverToBoxAdapter(
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 40.0),
-                            child: Column(
-                              children: [
-                                _searchController.text.isNotEmpty 
-                                    ? Icon(Icons.search_off, size: 48, color: Colors.grey[300])
-                                    : CircularProgressIndicator(color: Colors.black),
-                                SizedBox(height: 16),
-                                Text(
-                                  _searchController.text.isNotEmpty ? 'Produk tidak ditemukan' : 'Memuat produk...',
-                                  style: TextStyle(color: Colors.grey[500]),
-                                ),
-                              ],
-                            ),
+
+                // Categories Section
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 48,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            clipBehavior: Clip.none,
+                            children: [
+                              _buildCategoryItem(
+                                'All',
+                                cart.selectedCategory == null,
+                                () => cart.filterByCategory(null),
+                              ),
+                              ...cart.categories.map((cat) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: _buildCategoryItem(
+                                    cat.name,
+                                    cart.selectedCategory?.id == cat.id,
+                                    () => cart.filterByCategory(cat),
+                                  ),
+                                );
+                              }),
+                            ],
                           ),
                         ),
-                      )
-                    : SliverGrid(
-                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 155, // Diperkecil agar card tidak membesar berlebihan
-                          childAspectRatio: 0.9,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 30,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
+                        SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Products Section
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 8.0,
+                  ),
+                  sliver: cart.availableProducts.isEmpty
+                      ? SliverToBoxAdapter(
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 40.0),
+                              child: Column(
+                                children: [
+                                  _searchController.text.isNotEmpty
+                                      ? Icon(
+                                          Icons.search_off,
+                                          size: 48,
+                                          color: Colors.grey[300],
+                                        )
+                                      : CircularProgressIndicator(
+                                          color: Colors.black,
+                                        ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    _searchController.text.isNotEmpty
+                                        ? 'Produk tidak ditemukan'
+                                        : 'Memuat produk...',
+                                    style: TextStyle(color: Colors.grey[500]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent:
+                                    155, // Diperkecil agar card tidak membesar berlebihan
+                                childAspectRatio: 0.9,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 30,
+                              ),
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
                             final product = cart.availableProducts[index];
                             return FadeSlideIn(
                               delay: Duration(milliseconds: 40 * index),
                               child: _ProductCard(cart: cart, product: product),
                             );
-                          },
-                          childCount: cart.availableProducts.length,
+                          }, childCount: cart.availableProducts.length),
                         ),
-                      ),
-              ),
-              
-              SliverToBoxAdapter(child: SizedBox(height: 120)),
-            ],
-          ),
+                ),
+
+                SliverToBoxAdapter(child: SizedBox(height: 120)),
+              ],
+            ),
           ),
         );
       },
@@ -146,7 +166,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          border: isSelected 
+          border: isSelected
               ? Border.all(color: Colors.orange, width: 1.5)
               : Border.all(color: Colors.transparent),
           borderRadius: BorderRadius.circular(8),
@@ -177,7 +197,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey[200]!)
+              border: Border.all(color: Colors.grey[200]!),
             ),
             child: TextField(
               controller: _searchController,
@@ -187,7 +207,11 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                 prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.close, size: 20, color: Colors.grey[600]),
+                        icon: Icon(
+                          Icons.close,
+                          size: 20,
+                          color: Colors.grey[600],
+                        ),
                         onPressed: () {
                           setState(() {
                             _searchController.clear();
@@ -214,17 +238,23 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         ),
         SizedBox(width: 8),
         // Webkul close shift / Select table simulation
-        if (cart.isShiftOpen && Provider.of<AuthProvider>(context, listen: false).can('open_shift'))
+        if (cart.isShiftOpen &&
+            Provider.of<AuthProvider>(context, listen: false).can('open_shift'))
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               elevation: 0,
             ),
             onPressed: () => _showCloseShiftDialog(context, cart),
-            child: Text('Close Shift', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              'Close Shift',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
       ],
     );
@@ -245,14 +275,30 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                     border: Border.all(color: Colors.grey[300]!, width: 1),
                   ),
                   child: ClipOval(
-                    child: Image.asset('res/logo.png', width: 36, height: 36, fit: BoxFit.cover),
+                    child: Image.asset(
+                      'res/logo.png',
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 SizedBox(width: 12),
-                Text('TemanSudut', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
+                Text(
+                  'TemanSudut',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
+                  ),
+                ),
               ],
             ),
-            if (cart.isShiftOpen && Provider.of<AuthProvider>(context, listen: false).can('open_shift'))
+            if (cart.isShiftOpen &&
+                Provider.of<AuthProvider>(
+                  context,
+                  listen: false,
+                ).can('open_shift'))
               InkWell(
                 onTap: () => _showCloseShiftDialog(context, cart),
                 borderRadius: BorderRadius.circular(20),
@@ -266,9 +312,20 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.lock_outline, size: 14, color: Colors.red[700]),
+                      Icon(
+                        Icons.lock_outline,
+                        size: 14,
+                        color: Colors.red[700],
+                      ),
                       SizedBox(width: 4),
-                      Text('Tutup Kasir', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red[700])),
+                      Text(
+                        'Tutup Kasir',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red[700],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -281,8 +338,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: Offset(0, 4))],
-            border: Border.all(color: Colors.grey[200]!)
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.grey[200]!),
           ),
           child: TextField(
             controller: _searchController,
@@ -292,7 +355,11 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: Icon(Icons.close, size: 20, color: Colors.grey[600]),
+                      icon: Icon(
+                        Icons.close,
+                        size: 20,
+                        color: Colors.grey[600],
+                      ),
                       onPressed: () {
                         setState(() {
                           _searchController.clear();
@@ -302,7 +369,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                     )
                   : null,
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 14,
+                horizontal: 16,
+              ),
             ),
             onChanged: (value) {
               setState(() {});
@@ -316,69 +386,95 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   void _showCloseShiftDialog(BuildContext context, CartProvider cart) {
     final shift = cart.currentShift;
-    double expectedCash = double.tryParse(shift?['current_cash']?.toString() ?? '0') ?? 0;
+    double expectedCash =
+        double.tryParse(shift?['current_cash']?.toString() ?? '0') ?? 0;
 
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        final _cashController = TextEditingController(
+        final cashController = TextEditingController(
           text: expectedCash > 0 ? expectedCash.toInt().toString() : '',
         );
-        bool _isClosing = false;
-        
+        bool isClosing = false;
+
         return StatefulBuilder(
           builder: (context, setState) {
             return LinePopup(
               title: 'Tutup Sesi Kasir',
-              description: 'Masukkan nominal uang akhir di laci kasir (setelah shift selesai).',
-              icon: const Icon(Icons.lock_outline, size: 48, color: Colors.black87),
+              description:
+                  'Masukkan nominal uang akhir di laci kasir (setelah shift selesai).',
+              icon: const Icon(
+                Icons.lock_outline,
+                size: 48,
+                color: Colors.black87,
+              ),
               content: TextField(
-                controller: _cashController,
+                controller: cashController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Uang Akhir (Opsional)',
                   prefixText: 'Rp ',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFF5D4037), width: 2)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF5D4037),
+                      width: 2,
+                    ),
+                  ),
                 ),
               ),
               actions: [
                 LinePopupAction(
                   label: 'Batal',
                   style: LinePopupActionStyle.textNormal,
-                  onTap: _isClosing ? null : () => Navigator.pop(context),
+                  onTap: isClosing ? null : () => Navigator.pop(context),
                 ),
                 LinePopupAction(
-                  label: _isClosing ? 'Menutup...' : 'Tutup Kasir',
+                  label: isClosing ? 'Menutup...' : 'Tutup Kasir',
                   style: LinePopupActionStyle.filled,
-                  onTap: _isClosing ? null : () async {
-                    setState(() => _isClosing = true);
-                    double amount = double.tryParse(_cashController.text.replaceAll(',', '')) ?? 0;
-                    bool success = await cart.closeShift(amount);
-                    if (context.mounted) {
-                      setState(() => _isClosing = false);
-                      if (success) {
-                        Navigator.pop(context);
-                        // Show stock alert after closing shift
-                        showDialog(
-                          context: context,
-                          builder: (context) => const StockAlertDialog(
-                            title: 'Kasir Ditutup',
-                            message: 'Shift telah berakhir. Silakan cek ringkasan stok terakhir:',
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal menutup sesi kasir'), backgroundColor: Colors.red));
-                      }
-                    }
-                  },
+                  onTap: isClosing
+                      ? null
+                      : () async {
+                          setState(() => isClosing = true);
+                          double amount =
+                              double.tryParse(
+                                cashController.text.replaceAll(',', ''),
+                              ) ??
+                              0;
+                          bool success = await cart.closeShift(amount);
+                          if (context.mounted) {
+                            setState(() => isClosing = false);
+                            if (success) {
+                              Navigator.pop(context);
+                              // Show stock alert after closing shift
+                              showDialog(
+                                context: context,
+                                builder: (context) => const StockAlertDialog(
+                                  title: 'Kasir Ditutup',
+                                  message:
+                                      'Shift telah berakhir. Silakan cek ringkasan stok terakhir:',
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Gagal menutup sesi kasir'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
                 ),
               ],
             );
-          }
+          },
         );
-      }
+      },
     );
   }
 }
@@ -393,7 +489,8 @@ class _ProductCard extends StatefulWidget {
   State<_ProductCard> createState() => _ProductCardState();
 }
 
-class _ProductCardState extends State<_ProductCard> with SingleTickerProviderStateMixin {
+class _ProductCardState extends State<_ProductCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -404,9 +501,10 @@ class _ProductCardState extends State<_ProductCard> with SingleTickerProviderSta
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.90).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.90,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -425,7 +523,7 @@ class _ProductCardState extends State<_ProductCard> with SingleTickerProviderSta
 
         widget.cart.addToCart(widget.product);
         ScaffoldMessenger.of(context).clearSnackBars();
-        
+
         PopupNotification.show(
           context,
           title: 'Berhasil',
@@ -437,24 +535,26 @@ class _ProductCardState extends State<_ProductCard> with SingleTickerProviderSta
       },
       child: AnimatedBuilder(
         animation: _scaleAnimation,
-        builder: (context, child) => Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        ),
+        builder: (context, child) =>
+            Transform.scale(scale: _scaleAnimation.value, child: child),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             // Main Card Container
             Positioned.fill(
-              top: 38, 
+              top: 38,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: Offset(0, 4))
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
                   ],
-                  border: Border.all(color: Colors.grey[200]!)
+                  border: Border.all(color: Colors.grey[200]!),
                 ),
                 padding: EdgeInsets.fromLTRB(8, 58, 8, 8),
                 child: Column(
@@ -462,22 +562,30 @@ class _ProductCardState extends State<_ProductCard> with SingleTickerProviderSta
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      widget.product.name, 
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87), 
-                      maxLines: 2, 
+                      widget.product.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: Colors.black87,
+                      ),
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 4),
                     Text(
-                      AppFormat.currency(widget.product.price), 
-                      style: TextStyle(color: Colors.orange[700], fontWeight: FontWeight.w800, fontSize: 12)
+                      AppFormat.currency(widget.product.price),
+                      style: TextStyle(
+                        color: Colors.orange[700],
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            
+
             // Protruding Circular Image
             Positioned(
               top: 0,
@@ -492,18 +600,35 @@ class _ProductCardState extends State<_ProductCard> with SingleTickerProviderSta
                     color: Colors.white,
                     shape: BoxShape.circle,
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: Offset(0, 4))
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      ),
                     ],
                   ),
                   child: ClipOval(
-                    child: widget.product.image != null && widget.product.image!.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: ApiService().getImageUrl(widget.product.image),
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Center(child: CircularProgressIndicator(color: Colors.orange, strokeWidth: 2)),
-                          errorWidget: (context, url, error) => Icon(Icons.broken_image_outlined, size: 30, color: Colors.black12),
-                        )
-                      : Icon(Icons.fastfood, size: 36, color: Colors.black26),
+                    child:
+                        widget.product.image != null &&
+                            widget.product.image!.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: ApiService().getImageUrl(
+                              widget.product.image,
+                            ),
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.orange,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Icon(
+                              Icons.broken_image_outlined,
+                              size: 30,
+                              color: Colors.black12,
+                            ),
+                          )
+                        : Icon(Icons.fastfood, size: 36, color: Colors.black26),
                   ),
                 ),
               ),
@@ -512,30 +637,42 @@ class _ProductCardState extends State<_ProductCard> with SingleTickerProviderSta
             // Stock Badge if low/empty
             if (widget.product.stock <= 5)
               Positioned(
-                top: 48, right: 0,
+                top: 48,
+                right: 0,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: widget.product.stock == 0 ? Colors.red : Colors.orange,
-                    borderRadius: BorderRadius.horizontal(left: Radius.circular(4)),
+                    color: widget.product.stock == 0
+                        ? Colors.red
+                        : Colors.orange,
+                    borderRadius: BorderRadius.horizontal(
+                      left: Radius.circular(4),
+                    ),
                   ),
                   child: Text(
-                    widget.product.stock == 0 ? 'Habis' : 'Sisa ${widget.product.stock}',
-                    style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                    widget.product.stock == 0
+                        ? 'Habis'
+                        : 'Sisa ${widget.product.stock}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              )
+              ),
           ],
         ),
       ),
     );
   }
+
   void _showFloatingPlusOne(BuildContext context) {
     if (!mounted) return;
     final overlay = Overlay.of(context);
     final renderBox = context.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
-    
+
     final size = renderBox.size;
     final position = renderBox.localToGlobal(Offset.zero);
 
@@ -543,8 +680,8 @@ class _ProductCardState extends State<_ProductCard> with SingleTickerProviderSta
     entry = OverlayEntry(
       builder: (context) => _FloatingPlusOne(
         startPosition: Offset(
-          position.dx + size.width / 2 - 15, 
-          position.dy + size.height / 2 - 15
+          position.dx + size.width / 2 - 15,
+          position.dy + size.height / 2 - 15,
         ),
         onComplete: () {
           if (entry.mounted) entry.remove();
@@ -559,13 +696,17 @@ class _FloatingPlusOne extends StatefulWidget {
   final Offset startPosition;
   final VoidCallback onComplete;
 
-  const _FloatingPlusOne({required this.startPosition, required this.onComplete});
+  const _FloatingPlusOne({
+    required this.startPosition,
+    required this.onComplete,
+  });
 
   @override
   State<_FloatingPlusOne> createState() => _FloatingPlusOneState();
 }
 
-class _FloatingPlusOneState extends State<_FloatingPlusOne> with SingleTickerProviderStateMixin {
+class _FloatingPlusOneState extends State<_FloatingPlusOne>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
   late Animation<double> _dy;
@@ -573,16 +714,20 @@ class _FloatingPlusOneState extends State<_FloatingPlusOne> with SingleTickerPro
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
     _opacity = TweenSequence<double>([
       TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 20),
       TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 40),
       TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 40),
     ]).animate(_controller);
 
-    _dy = Tween<double>(begin: widget.startPosition.dy, end: widget.startPosition.dy - 60).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _dy = Tween<double>(
+      begin: widget.startPosition.dy,
+      end: widget.startPosition.dy - 60,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller.forward().then((_) => widget.onComplete());
   }
@@ -609,12 +754,20 @@ class _FloatingPlusOneState extends State<_FloatingPlusOne> with SingleTickerPro
                 color: Colors.orange,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
-                  BoxShadow(color: Colors.orange.withOpacity(0.5), blurRadius: 8, offset: const Offset(0, 4)),
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.5),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
                 ],
               ),
               child: const Text(
                 '+1',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ),
           ),
@@ -623,4 +776,3 @@ class _FloatingPlusOneState extends State<_FloatingPlusOne> with SingleTickerPro
     );
   }
 }
-
