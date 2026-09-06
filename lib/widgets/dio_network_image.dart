@@ -48,18 +48,20 @@ class _DioNetworkImageState extends State<DioNetworkImage> {
           _loading = false;
         });
       } else {
-        if (mounted)
+        if (mounted) {
           setState(() {
             _loading = false;
             _error = true;
           });
+        }
       }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _loading = false;
           _error = true;
         });
+      }
     }
   }
 

@@ -1379,9 +1379,10 @@ class OrdersTab extends StatelessWidget {
                                                                   amountReceived -
                                                                   cart.total;
                                                               if (changeAmount <
-                                                                  0)
+                                                                  0) {
                                                                 changeAmount =
                                                                     0;
+                                                              }
                                                             });
                                                           },
                                                         ),
@@ -1747,17 +1748,19 @@ class OrdersTab extends StatelessWidget {
                                                                 .saveTransaction(
                                                                   finalName,
                                                                 );
-                                                            if (!ctx.mounted)
+                                                            if (!ctx.mounted) {
                                                               return;
+                                                            }
                                                             Navigator.pop(
                                                               sheetCtx,
                                                             );
                                                             if (isBottomSheet &&
                                                                 outerContext
-                                                                    .mounted)
+                                                                    .mounted) {
                                                               Navigator.pop(
                                                                 outerContext,
                                                               );
+                                                            }
                                                             PopupNotification.show(
                                                               outerContext,
                                                               title: ok

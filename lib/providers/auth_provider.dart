@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'dart:developer' as developer;
+
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
 
@@ -19,7 +21,8 @@ class AuthProvider with ChangeNotifier {
 
   bool can(String feature) {
     if (_permissions.containsKey(feature)) {
-      return _permissions[feature][_role] == true || _permissions[feature][_role] == 1;
+      return _permissions[feature][_role] == true ||
+          _permissions[feature][_role] == 1;
     }
     return false;
   }
@@ -41,31 +44,31 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> login(String email, String password) async {
-    print('Attempting login for: $email');
+    developer.log('Attempting login for: $email');
     try {
       final response = await _apiService.login(email, password);
       if (response != null && response['access_token'] != null) {
-        print('Login success, parsing user data...');
+        developer.log('Login success, parsing user data...');
         _token = response['access_token'];
         _user = response['user'];
         _role = response['user']?['role'] ?? 'cashier';
         _isAuthenticated = true;
-        print('Set role to: $_role');
+        developer.log('Set role to: $_role');
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', _token!);
-        
+
         _apiService.setToken(_token!);
-        print('Fetching permissions...');
+        developer.log('Fetching permissions...');
         await fetchPermissions();
-        print('Ready! Notifying listeners.');
+        developer.log('Ready! Notifying listeners.');
         notifyListeners();
         return true;
       } else {
-        print('Login response was null or missing token.');
+        developer.log('Login response was null or missing token.');
       }
     } catch (e) {
-      print('Login Exception: $e');
+      developer.log('Login Exception: $e');
     }
     return false;
   }
@@ -82,7 +85,7 @@ class AuthProvider with ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print('Fetch user error: $e');
+      developer.log('Fetch user error: $e');
       await logout();
     }
   }
@@ -94,7 +97,7 @@ class AuthProvider with ChangeNotifier {
         _permissions = perms;
       }
     } catch (e) {
-      print('Fetch permissions error: $e');
+      developer.log('Fetch permissions error: $e');
     }
   }
 
@@ -102,17 +105,17 @@ class AuthProvider with ChangeNotifier {
     try {
       await _apiService.logout();
     } catch (e) {
-      print('Logout error: $e'); 
+      developer.log('Logout error: $e');
     }
     _token = null;
     _user = null;
     _permissions = {};
     _isAuthenticated = false;
     _apiService.clearToken();
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
-    
+
     notifyListeners();
   }
 }

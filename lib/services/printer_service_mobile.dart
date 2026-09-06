@@ -1,4 +1,6 @@
-﻿import 'package:blue_thermal_printer/blue_thermal_printer.dart';
+﻿import 'dart:developer' as developer;
+
+import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,8 +56,10 @@ class PrinterServiceMobile implements PrinterService {
   Future<void> downloadReceiptPdf(int transactionId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token') ?? '';
-    final url = Uri.parse('${ApiService.baseUrl}/transactions/$transactionId/receipt?token=$token');
-    
+    final url = Uri.parse(
+      '${ApiService.baseUrl}/transactions/$transactionId/receipt?token=$token',
+    );
+
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw Exception('Could not launch $url');
     }
@@ -68,7 +72,7 @@ class PrinterServiceMobile implements PrinterService {
     required bool isHistory,
   }) async {
     if (!(await isConnected)) {
-      print('Printer not connected');
+      developer.log('Printer not connected');
       throw Exception('Printer not connected');
     }
 
@@ -78,7 +82,12 @@ class PrinterServiceMobile implements PrinterService {
 
     bytes += generator.text(
       's u d u t  k o p i.',
-      styles: PosStyles(align: PosAlign.center, bold: true, height: PosTextSize.size2, width: PosTextSize.size2),
+      styles: PosStyles(
+        align: PosAlign.center,
+        bold: true,
+        height: PosTextSize.size2,
+        width: PosTextSize.size2,
+      ),
     );
     bytes += generator.text(
       'Jl. Contoh Alamat Resto No.123',
@@ -93,8 +102,15 @@ class PrinterServiceMobile implements PrinterService {
 
     // Meta Info
     bytes += generator.row([
-      PosColumn(text: 'Tgl: ${transaction['created_at'].toString().substring(0, 10)}', width: 6),
-      PosColumn(text: 'Jam: ${transaction['created_at'].toString().substring(11, 16)}', width: 6, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+        text: 'Tgl: ${transaction['created_at'].toString().substring(0, 10)}',
+        width: 6,
+      ),
+      PosColumn(
+        text: 'Jam: ${transaction['created_at'].toString().substring(11, 16)}',
+        width: 6,
+        styles: PosStyles(align: PosAlign.right),
+      ),
     ]);
     String custName = transaction['customer_name'] ?? 'Guest';
     String tableNum = '-';
@@ -106,30 +122,43 @@ class PrinterServiceMobile implements PrinterService {
 
     bytes += generator.row([
       PosColumn(text: 'No: INV-${transaction['id']}', width: 6),
-      PosColumn(text: 'Kasir: ${transaction['user']?['name'] ?? 'Staff'}', width: 6, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+        text: 'Kasir: ${transaction['user']?['name'] ?? 'Staff'}',
+        width: 6,
+        styles: PosStyles(align: PosAlign.right),
+      ),
     ]);
     bytes += generator.text('Pelanggan: $custName');
     bytes += generator.text('Meja: $tableNum');
-    
+
     bytes += generator.hr();
 
-    // Items List 
+    // Items List
     for (var item in items) {
       String name = item['product']['name'];
       int qty = int.tryParse(item['quantity'].toString()) ?? 1;
       double price = double.tryParse(item['unit_price'].toString()) ?? 0;
-      double subtotal = double.tryParse(item['subtotal'].toString()) ?? (price * qty);
-      double extraCharge = double.tryParse(item['extra_charge']?.toString() ?? '0') ?? 0;
+      double subtotal =
+          double.tryParse(item['subtotal'].toString()) ?? (price * qty);
+      double extraCharge =
+          double.tryParse(item['extra_charge']?.toString() ?? '0') ?? 0;
 
       bytes += generator.text(name, styles: PosStyles(bold: true));
       bytes += generator.row([
         PosColumn(text: '  $qty x ${AppFormat.currency(price)}', width: 7),
-        PosColumn(text: AppFormat.currency(subtotal), width: 5, styles: PosStyles(align: PosAlign.right)),
+        PosColumn(
+          text: AppFormat.currency(subtotal),
+          width: 5,
+          styles: PosStyles(align: PosAlign.right),
+        ),
       ]);
-      
+
       if (extraCharge > 0) {
         bytes += generator.row([
-          PosColumn(text: '  + Extra: ${AppFormat.currency(extraCharge)}/item', width: 8),
+          PosColumn(
+            text: '  + Extra: ${AppFormat.currency(extraCharge)}/item',
+            width: 8,
+          ),
           PosColumn(text: '', width: 4),
         ]);
       }
@@ -138,36 +167,77 @@ class PrinterServiceMobile implements PrinterService {
     bytes += generator.hr();
 
     // Footer Totals
-    double txSubtotal = double.tryParse(transaction['subtotal'].toString()) ?? 0;
+    double txSubtotal =
+        double.tryParse(transaction['subtotal'].toString()) ?? 0;
     double txTax = double.tryParse(transaction['tax'].toString()) ?? 0;
     double txTotal = double.tryParse(transaction['total'].toString()) ?? 0;
-    double txReceived = double.tryParse(transaction['amount_received']?.toString() ?? '') ?? txTotal;
-    double txChange = double.tryParse(transaction['change_amount']?.toString() ?? '') ?? 0;
+    double txReceived =
+        double.tryParse(transaction['amount_received']?.toString() ?? '') ??
+        txTotal;
+    double txChange =
+        double.tryParse(transaction['change_amount']?.toString() ?? '') ?? 0;
 
     bytes += generator.row([
       PosColumn(text: 'Subtotal', width: 6),
-      PosColumn(text: AppFormat.currency(txSubtotal), width: 6, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+        text: AppFormat.currency(txSubtotal),
+        width: 6,
+        styles: PosStyles(align: PosAlign.right),
+      ),
     ]);
     if (txTax > 0) {
       bytes += generator.row([
         PosColumn(text: 'Pajak (PPN)', width: 6),
-        PosColumn(text: AppFormat.currency(txTax), width: 6, styles: PosStyles(align: PosAlign.right)),
+        PosColumn(
+          text: AppFormat.currency(txTax),
+          width: 6,
+          styles: PosStyles(align: PosAlign.right),
+        ),
       ]);
     }
-    
+
     bytes += generator.row([
-      PosColumn(text: 'TOTAL', width: 6, styles: PosStyles(bold: true, height: PosTextSize.size1, width: PosTextSize.size1)),
-      PosColumn(text: AppFormat.currency(txTotal), width: 6, styles: PosStyles(align: PosAlign.right, bold: true, height: PosTextSize.size1, width: PosTextSize.size1)),
+      PosColumn(
+        text: 'TOTAL',
+        width: 6,
+        styles: PosStyles(
+          bold: true,
+          height: PosTextSize.size1,
+          width: PosTextSize.size1,
+        ),
+      ),
+      PosColumn(
+        text: AppFormat.currency(txTotal),
+        width: 6,
+        styles: PosStyles(
+          align: PosAlign.right,
+          bold: true,
+          height: PosTextSize.size1,
+          width: PosTextSize.size1,
+        ),
+      ),
     ]);
-    
+
     bytes += generator.feed(1);
     bytes += generator.row([
-      PosColumn(text: 'Bayar (${transaction['payment_method'].toString().toUpperCase()})', width: 7),
-      PosColumn(text: AppFormat.currency(txReceived), width: 5, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+        text:
+            'Bayar (${transaction['payment_method'].toString().toUpperCase()})',
+        width: 7,
+      ),
+      PosColumn(
+        text: AppFormat.currency(txReceived),
+        width: 5,
+        styles: PosStyles(align: PosAlign.right),
+      ),
     ]);
     bytes += generator.row([
       PosColumn(text: 'Kembali', width: 6),
-      PosColumn(text: AppFormat.currency(txChange), width: 6, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+        text: AppFormat.currency(txChange),
+        width: 6,
+        styles: PosStyles(align: PosAlign.right),
+      ),
     ]);
 
     bytes += generator.feed(1);

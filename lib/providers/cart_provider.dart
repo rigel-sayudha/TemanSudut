@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../models/table_model.dart';
@@ -12,7 +14,7 @@ class CartItem {
   double extraCharge;
   String? extraChargeLabel;
   bool isFree;
-  bool useCup; // true = disposable cup (deduct stock), false = reusable glass
+  bool useCup;
 
   CartItem({
     required this.product,
@@ -372,7 +374,7 @@ class CartProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      print('Checkout Error: $e');
+      developer.log('Checkout Error: $e');
       _lastCheckoutError = 'Terjadi kesalahan saat checkout';
       notifyListeners();
       return false;

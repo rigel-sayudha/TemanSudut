@@ -1,5 +1,6 @@
-﻿import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+﻿import 'dart:developer' as developer;
+
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../services/printer_service.dart';
@@ -68,7 +69,7 @@ class _PrinterSettingsScreenState extends State<PrinterSettingsScreen> {
         });
       }
     } catch (e) {
-      print("Error initializing printer: $e");
+      developer.log("Error initializing printer: $e");
     }
   }
 
@@ -99,7 +100,7 @@ class _PrinterSettingsScreenState extends State<PrinterSettingsScreen> {
         });
       }
     } catch (e) {
-      print("Failed to get bluetooth devices: $e");
+      developer.log("Failed to get bluetooth devices: $e");
     } finally {
       if (mounted) {
         setState(() => _isScanning = false);

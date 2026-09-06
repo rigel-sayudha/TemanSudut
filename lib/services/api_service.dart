@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -72,14 +74,14 @@ class ApiService {
         '/login',
         data: {'email': email, 'password': password},
       );
-      print('Login Success Response: ${response.data}');
+      developer.log('Login Success Response: ${response.data}');
       return response.data;
     } catch (e) {
       if (e is DioException) {
-        print('Failed to login (Dio): ${e.message}');
-        print('Response Body: ${e.response?.data}');
+        developer.log('Failed to login (Dio): ${e.message}');
+        developer.log('Response Body: ${e.response?.data}');
       } else {
-        print('Failed to login (Unknown): $e');
+        developer.log('Failed to login (Unknown): $e');
       }
       return null;
     }
@@ -140,10 +142,10 @@ class ApiService {
   Future<Map<String, dynamic>?> getPermissions() async {
     try {
       final response = await _dio.get('/permissions');
-      print('Permissions Response: ${response.data}');
+      developer.log('Permissions Response: ${response.data}');
       return response.data;
     } catch (e) {
-      print('Failed to get permissions: $e');
+      developer.log('Failed to get permissions: $e');
       return null;
     }
   }
@@ -156,7 +158,7 @@ class ApiService {
       );
       return response.data;
     } catch (e) {
-      print('Failed to get history: $e');
+      developer.log('Failed to get history: $e');
       return [];
     }
   }
@@ -166,7 +168,7 @@ class ApiService {
       final response = await _dio.get('/transactions/active');
       return response.data;
     } catch (e) {
-      print('Failed to get active orders: $e');
+      developer.log('Failed to get active orders: $e');
       return [];
     }
   }
@@ -214,16 +216,18 @@ class ApiService {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print('Update status failed with status code: ${response.statusCode}');
-        print('Response data: ${response.data}');
+        developer.log(
+          'Update status failed with status code: ${response.statusCode}',
+        );
+        developer.log('Response data: ${response.data}');
         return false;
       }
     } catch (e) {
       if (e is DioException) {
-        print('Dio error updating status: ${e.message}');
-        print('Response: ${e.response?.data}');
+        developer.log('Dio error updating status: ${e.message}');
+        developer.log('Response: ${e.response?.data}');
       } else {
-        print('Unknown error updating status: $e');
+        developer.log('Unknown error updating status: $e');
       }
       return false;
     }
@@ -235,21 +239,21 @@ class ApiService {
     Map<String, dynamic> payload,
   ) async {
     try {
-      print('=== SAVE TRANSACTION REQUEST ===');
-      print('Payload: $payload');
+      developer.log('=== SAVE TRANSACTION REQUEST ===');
+      developer.log('Payload: $payload');
       final response = await _dio.post('/transactions/save', data: payload);
-      print('=== SAVE TRANSACTION RESPONSE ===');
-      print('Status: ${response.statusCode}');
-      print('Data: ${response.data}');
+      developer.log('=== SAVE TRANSACTION RESPONSE ===');
+      developer.log('Status: ${response.statusCode}');
+      developer.log('Data: ${response.data}');
       return response.data ?? {'success': false};
     } catch (e) {
-      print('=== SAVE TRANSACTION ERROR ===');
+      developer.log('=== SAVE TRANSACTION ERROR ===');
       if (e is DioException) {
-        print('Status: ${e.response?.statusCode}');
-        print('Response data: ${e.response?.data}');
-        print('Message: ${e.message}');
+        developer.log('Status: ${e.response?.statusCode}');
+        developer.log('Response data: ${e.response?.data}');
+        developer.log('Message: ${e.message}');
       } else {
-        print('Error: $e');
+        developer.log('Error: $e');
       }
       return {'success': false, 'error': e.toString()};
     }
@@ -260,7 +264,7 @@ class ApiService {
       final response = await _dio.get('/transactions/saved');
       return response.data ?? [];
     } catch (e) {
-      print('Failed to load saved transactions: $e');
+      developer.log('Failed to load saved transactions: $e');
       return [];
     }
   }
@@ -270,7 +274,7 @@ class ApiService {
       final response = await _dio.delete('/transactions/saved/$id');
       return response.statusCode == 200;
     } catch (e) {
-      print('Failed to delete saved transaction: $e');
+      developer.log('Failed to delete saved transaction: $e');
       return false;
     }
   }
@@ -287,7 +291,7 @@ class ApiService {
       return response.data ?? {'success': false};
     } catch (e) {
       if (e is DioException) {
-        print('Activate saved error: ${e.response?.data}');
+        developer.log('Activate saved error: ${e.response?.data}');
         final data = e.response?.data;
         if (data is Map) return Map<String, dynamic>.from(data);
       }
@@ -301,7 +305,7 @@ class ApiService {
       List<dynamic> data = response.data;
       return data.map((json) => Category.fromJson(json)).toList();
     } catch (e) {
-      print('Failed to load categories: $e');
+      developer.log('Failed to load categories: $e');
       return [];
     }
   }
@@ -318,7 +322,7 @@ class ApiService {
       List<dynamic> data = response.data;
       return data.map((json) => Product.fromJson(json)).toList();
     } catch (e) {
-      print('Failed to load products: $e');
+      developer.log('Failed to load products: $e');
       return [];
     }
   }
@@ -328,7 +332,7 @@ class ApiService {
       final response = await _dio.put('/products/$id', data: data);
       return response.statusCode == 200;
     } catch (e) {
-      print('Failed to update product: $e');
+      developer.log('Failed to update product: $e');
       return false;
     }
   }
@@ -339,7 +343,7 @@ class ApiService {
       List<dynamic> data = response.data;
       return data.map((json) => TableModel.fromJson(json)).toList();
     } catch (e) {
-      print('Failed to load tables: $e');
+      developer.log('Failed to load tables: $e');
       return [];
     }
   }
@@ -368,7 +372,7 @@ class ApiService {
           'details': data?['details'] ?? [],
         };
       }
-      print('Failed to create transaction: $e');
+      developer.log('Failed to create transaction: $e');
       return {'success': false, 'error': 'Gagal membuat transaksi'};
     }
   }
@@ -378,7 +382,7 @@ class ApiService {
       final response = await _dio.delete('/transactions/$id');
       return response.statusCode == 200;
     } catch (e) {
-      print('Failed to delete transaction: $e');
+      developer.log('Failed to delete transaction: $e');
       return false;
     }
   }
@@ -390,7 +394,7 @@ class ApiService {
       final response = await _dio.get('/users');
       return response.data;
     } catch (e) {
-      print('Failed to get users: $e');
+      developer.log('Failed to get users: $e');
       return [];
     }
   }
@@ -400,7 +404,7 @@ class ApiService {
       final response = await _dio.post('/users', data: data);
       return response.statusCode == 201;
     } catch (e) {
-      print('Failed to create user: $e');
+      developer.log('Failed to create user: $e');
       return false;
     }
   }
@@ -410,7 +414,7 @@ class ApiService {
       final response = await _dio.put('/users/$id', data: data);
       return response.statusCode == 200;
     } catch (e) {
-      print('Failed to update user: $e');
+      developer.log('Failed to update user: $e');
       return false;
     }
   }
@@ -420,7 +424,7 @@ class ApiService {
       final response = await _dio.delete('/users/$id');
       return response.statusCode == 200;
     } catch (e) {
-      print('Failed to delete user: $e');
+      developer.log('Failed to delete user: $e');
       return false;
     }
   }
@@ -433,7 +437,7 @@ class ApiService {
       }
       return null;
     } catch (e) {
-      print('Failed to get current shift: $e');
+      developer.log('Failed to get current shift: $e');
       return null;
     }
   }
@@ -447,7 +451,7 @@ class ApiService {
       return (response.statusCode == 200 || response.statusCode == 201) &&
           response.data['status'] == 'success';
     } catch (e) {
-      print('Failed to open shift: $e');
+      developer.log('Failed to open shift: $e');
       return false;
     }
   }
@@ -460,7 +464,7 @@ class ApiService {
       );
       return response.statusCode == 200 && response.data['status'] == 'success';
     } catch (e) {
-      print('Failed to close shift: $e');
+      developer.log('Failed to close shift: $e');
       return false;
     }
   }
@@ -473,7 +477,7 @@ class ApiService {
       List<dynamic> data = response.data;
       return data.map((json) => RawMaterial.fromJson(json)).toList();
     } catch (e) {
-      print('Failed to load raw materials: $e');
+      developer.log('Failed to load raw materials: $e');
       return [];
     }
   }
@@ -483,7 +487,7 @@ class ApiService {
       final response = await _dio.put('/raw-materials/$id', data: data);
       return response.statusCode == 200;
     } catch (e) {
-      print('Failed to update raw material: $e');
+      developer.log('Failed to update raw material: $e');
       return false;
     }
   }
@@ -512,7 +516,7 @@ class ApiService {
       );
       return response.data as List;
     } catch (e) {
-      print('Failed to get finance entries: $e');
+      developer.log('Failed to get finance entries: $e');
       return [];
     }
   }
@@ -522,7 +526,7 @@ class ApiService {
       final response = await _dio.post('/finance-entries', data: data);
       return response.statusCode == 201;
     } catch (e) {
-      print('Failed to create finance entry: $e');
+      developer.log('Failed to create finance entry: $e');
       return false;
     }
   }
@@ -532,7 +536,7 @@ class ApiService {
       final response = await _dio.put('/finance-entries/$id', data: data);
       return response.statusCode == 200;
     } catch (e) {
-      print('Failed to update finance entry: $e');
+      developer.log('Failed to update finance entry: $e');
       return false;
     }
   }
@@ -542,7 +546,7 @@ class ApiService {
       final response = await _dio.delete('/finance-entries/$id');
       return response.statusCode == 200;
     } catch (e) {
-      print('Failed to delete finance entry: $e');
+      developer.log('Failed to delete finance entry: $e');
       return false;
     }
   }
@@ -568,7 +572,7 @@ class ApiService {
       );
       return response.data as Map<String, dynamic>;
     } catch (e) {
-      print('Failed to get finance summary: $e');
+      developer.log('Failed to get finance summary: $e');
       return null;
     }
   }
@@ -581,7 +585,7 @@ class ApiService {
       );
       return response.data as Map<String, dynamic>;
     } catch (e) {
-      print('Failed to get finance chart: $e');
+      developer.log('Failed to get finance chart: $e');
       return null;
     }
   }

@@ -1,6 +1,5 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:image_picker/image_picker.dart';
 
 class CameraHelper {
   static Future<XFile?> captureWithCamera(BuildContext context) async {
